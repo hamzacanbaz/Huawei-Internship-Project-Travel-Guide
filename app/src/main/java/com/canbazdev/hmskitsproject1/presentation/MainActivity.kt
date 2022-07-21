@@ -1,6 +1,5 @@
 package com.canbazdev.hmskitsproject1.presentation
 
-import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -14,10 +13,9 @@ import com.canbazdev.hmskitsproject1.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.huawei.agconnect.AGConnectInstance
 import com.huawei.agconnect.api.AGConnectApi
-import com.huawei.hms.mlsdk.MLAnalyzerFactory
-import com.huawei.hms.mlsdk.common.MLFrame
-import java.io.IOException
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

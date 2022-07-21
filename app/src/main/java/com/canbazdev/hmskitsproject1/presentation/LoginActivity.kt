@@ -10,7 +10,6 @@ import com.huawei.agconnect.AGConnectInstance
 import com.huawei.agconnect.api.AGConnectApi
 import com.huawei.agconnect.auth.AGConnectAuth
 import com.huawei.agconnect.auth.AGConnectAuthCredential
-import com.huawei.agconnect.auth.PhoneUser
 import com.huawei.agconnect.auth.VerifyCodeSettings
 import com.huawei.hms.common.ApiException
 import com.huawei.hms.support.account.AccountAuthManager
@@ -26,7 +25,7 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //goToMainActivity("hamza")
+        goToMainActivity("hamza")
         AGConnectApi.getInstance().activityLifecycle().onCreate(this)
         if (AGConnectInstance.getInstance() == null) {
             AGConnectInstance.initialize(applicationContext);
@@ -59,21 +58,21 @@ class LoginActivity : AppCompatActivity() {
             }
 
 
-           /* val phoneUser = PhoneUser.Builder()
-                .setCountryCode("90")
-                .setPhoneNumber("5056953929")
-                .setVerifyCode("verify code")
-                .setPassword("123456")
-                .build()
-            try {
-                AGConnectAuth.getInstance().createUser(phoneUser).addOnSuccessListener {
-                    // A newly created user account is automatically signed in to your app.
-                }.addOnFailureListener {
-                    // onFail
-                }
-            } catch (e: InvalidParameterException) {
-                println(e.localizedMessage)
-            }*/
+            /* val phoneUser = PhoneUser.Builder()
+                 .setCountryCode("90")
+                 .setPhoneNumber("5056953929")
+                 .setVerifyCode("verify code")
+                 .setPassword("123456")
+                 .build()
+             try {
+                 AGConnectAuth.getInstance().createUser(phoneUser).addOnSuccessListener {
+                     // A newly created user account is automatically signed in to your app.
+                 }.addOnFailureListener {
+                     // onFail
+                 }
+             } catch (e: InvalidParameterException) {
+                 println(e.localizedMessage)
+             }*/
 
         }
 
@@ -88,7 +87,7 @@ class LoginActivity : AppCompatActivity() {
                 }.addOnFailureListener {
                     println(it.localizedMessage)
                 }
-            }catch (e:InvalidParameterException){
+            } catch (e: InvalidParameterException) {
                 println(e.localizedMessage)
             }
         }
@@ -101,7 +100,7 @@ class LoginActivity : AppCompatActivity() {
                     }.addOnFailureListener {
                         println(it.localizedMessage)
                     }
-            }catch (e:InvalidParameterException){
+            } catch (e: InvalidParameterException) {
                 println(e.localizedMessage)
             }
 

@@ -9,7 +9,9 @@ import com.canbazdev.hmskitsproject1.databinding.FragmentHomeBinding
 import com.canbazdev.hmskitsproject1.presentation.base.BaseFragment
 import com.huawei.hms.support.account.request.AccountAuthParams
 import com.huawei.hms.support.account.service.AccountAuthService
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
     private val viewModel: HomeViewModel by viewModels()
