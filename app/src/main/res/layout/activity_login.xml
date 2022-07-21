@@ -1,38 +1,122 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".presentation.LoginActivity">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <com.google.android.material.appbar.AppBarLayout
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/Theme.HmsKitsProject1.AppBarOverlay">
+        android:layout_height="match_parent"
+        tools:context=".presentation.LoginActivity">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:popupTheme="@style/Theme.HmsKitsProject1.PopupOverlay" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/v0_1"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.1" />
 
-    </com.google.android.material.appbar.AppBarLayout>
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/h0_1"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.1" />
 
-    <TextView
-        android:id="@+id/tvName"
-        android:layout_gravity="center"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-    <com.huawei.hms.support.hwid.ui.HuaweiIdAuthButton
-        android:id="@+id/HuaweiIdAuthButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/h0_6"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.6" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/v0_9"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.9" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:visibility="invisible"
+            android:id="@+id/tfEmail"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="Email"
+            app:layout_constraintBottom_toTopOf="@id/tfPassword"
+            app:layout_constraintEnd_toEndOf="@id/v0_9"
+            app:layout_constraintStart_toStartOf="@id/v0_1"
+            app:layout_constraintTop_toTopOf="@id/h0_1">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:visibility="invisible"
+            android:id="@+id/tfPassword"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="Password"
+            app:layout_constraintBottom_toTopOf="@id/btnSignUp"
+            app:layout_constraintEnd_toEndOf="@id/v0_9"
+            app:layout_constraintStart_toStartOf="@id/v0_1"
+            app:layout_constraintTop_toBottomOf="@id/tfEmail">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
+            android:visibility="invisible"
+            android:id="@+id/btnSignUp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sign up"
+            app:layout_constraintBottom_toTopOf="@id/h0_6"
+            app:layout_constraintEnd_toStartOf="@id/btnSignIn"
+            app:layout_constraintStart_toStartOf="@id/v0_1"
+            app:layout_constraintTop_toBottomOf="@id/tfPassword" />
+
+        <Button
+            android:id="@+id/btnSignIn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="mobıle number"
+            app:layout_constraintBottom_toTopOf="@id/h0_6"
+            app:layout_constraintEnd_toEndOf="@id/v0_9"
+            app:layout_constraintStart_toEndOf="@id/btnSignUp"
+            app:layout_constraintTop_toBottomOf="@id/tfPassword" />
 
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+        <com.huawei.hms.support.hwid.ui.HuaweiIdAuthButton
+            android:id="@+id/HuaweiIdAuthButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/h0_6" />
+
+        <Button
+            android:id="@+id/btnAnonymous"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Anonymous"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/HuaweiIdAuthButton" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -1,3 +1,5 @@
+-keep class com.huawei.agconnect.** {*;}
+
 # Add project specific ProGuard rules here.
 # You can control the set of applied configuration files using the
 # proguardFiles setting in build.gradle.
@@ -19,3 +21,15 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+-ignorewarnings
+-keepattributes *Annotation*
+-keepattributes Exceptions
+-keepattributes InnerClasses
+-keepattributes Signature
+-keepattributes SourceFile,LineNumberTable
+-keep class com.huawei.hianalytics.**{*;}
+-keep class com.huawei.updatesdk.**{*;}
+-keep class com.huawei.hms.**{*;}
+-keep class * extends com.huawei.hms.core.aidl.IMessageEntity{ *; }
+-keep public class com.huawei.location.nlp.network.** {*; }
+-keep class com.huawei.wisesecurity.ucs.**{*;}

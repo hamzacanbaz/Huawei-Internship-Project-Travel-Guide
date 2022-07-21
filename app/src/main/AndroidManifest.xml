@@ -6,8 +6,13 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- check wifi state -->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
+
 
     <application
+        android:name=".HmsKitsApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -21,7 +26,7 @@
             android:name=".presentation.LoginActivity"
             android:exported="true"
             android:label="@string/title_activity_login"
-            android:theme="@style/Theme.HmsKitsProject1.NoActionBar">
+            android:theme="@style/Theme.HmsKitsProject1">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -35,6 +40,10 @@
         <meta-data
             android:name="com.huawei.hms.client.cpid"
             android:value="5190090000032885372" />
+
+        <meta-data
+            android:name="com.huawei.hms.ml.DEPENDENCY"
+            android:value= "ocr"/>
 
         <activity
             android:name=".presentation.MainActivity"
