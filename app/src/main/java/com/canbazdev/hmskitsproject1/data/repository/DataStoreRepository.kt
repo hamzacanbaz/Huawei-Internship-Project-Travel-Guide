@@ -22,6 +22,7 @@ val Context.dataStore: DataStore<Preferences> by preferencesDataStore("USER_PREF
 class DataStoreRepository @Inject constructor(@ApplicationContext val context: Context) {
 
     private val isOpenedFirstTime = booleanPreferencesKey("IS_OPENED_FIRST_TIME")
+    private val silentSignInEnabled = booleanPreferencesKey("SILENT_SIGNIN_ENABLED")
     private val charactersLayoutManager = intPreferencesKey("CHARACTERS_LAYOUT_MANAGER")
 
 
@@ -35,7 +36,21 @@ class DataStoreRepository @Inject constructor(@ApplicationContext val context: C
         }
     }
 
+    val getSilentSignInEnabled: Flow<Boolean> = context.dataStore.data.map {
+        it[silentSignInEnabled] ?: false
+    }
 
+    fun getEnabled(): Flow<Boolean> {
+        return context.dataStore.data.map {
+            it[silentSignInEnabled] ?: false
+        }
+    }
+
+    suspend fun setSilentSignInEnabled(isEnabled: Boolean) {
+        context.dataStore.edit {
+            it[silentSignInEnabled] = isEnabled
+        }
+    }
 
 
 }

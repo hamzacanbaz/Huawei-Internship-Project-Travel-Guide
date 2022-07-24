@@ -1,14 +1,238 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".presentation.register.RegisterFragment">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.canbazdev.hmskitsproject1.presentation.register.RegisterViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        tools:context=".presentation.LoginActivity">
 
-</FrameLayout>
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/v0_1"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.1" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/v0_2"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.2" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/v0_8"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.8" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/h0_05"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.05" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/h0_4"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.4" />
+
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/h0_75"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.80" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/h0_92"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.92" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/h0_88"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.88" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/h0_82"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.82" />
+
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/v0_9"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.9" />
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@id/h0_4"
+            app:layout_constraintEnd_toEndOf="@id/v0_8"
+            app:layout_constraintStart_toStartOf="@id/v0_2"
+            app:layout_constraintTop_toBottomOf="@id/h0_05"
+            app:lottie_autoPlay="true"
+            app:lottie_rawRes="@raw/register" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tfEmail"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="Email"
+            app:layout_constraintBottom_toTopOf="@id/tfPassword"
+            app:layout_constraintEnd_toEndOf="@id/v0_9"
+            app:layout_constraintStart_toStartOf="@id/v0_1"
+            app:layout_constraintTop_toTopOf="@id/h0_4"
+            app:startIconDrawable="@drawable/ic_baseline_mail_24">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:afterTextChanged="@{viewModel.updateEmail}" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tfPassword"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="Password"
+            app:layout_constraintBottom_toTopOf="@id/tfVerificationCode"
+            app:layout_constraintEnd_toEndOf="@id/v0_9"
+            app:layout_constraintStart_toStartOf="@id/v0_1"
+            app:layout_constraintTop_toBottomOf="@id/tfEmail"
+            app:startIconDrawable="@drawable/ic_baseline_vpn_key_24">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:afterTextChanged="@{viewModel.updatePassword}"
+                android:inputType="textPassword" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tfVerificationCode"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="Verification Code"
+            app:layout_constraintBottom_toTopOf="@id/btnSignUp"
+            app:layout_constraintEnd_toEndOf="@id/v0_8"
+            app:layout_constraintStart_toStartOf="@id/v0_1"
+            app:layout_constraintTop_toBottomOf="@id/tfPassword"
+            app:startIconDrawable="@drawable/ic_baseline_check_24">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etVerificationCode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:afterTextChanged="@{viewModel.updateVerificationCode}"
+                android:inputType="number" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/tvSendVerificationCode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="SEND"
+            android:textColor="@color/primary_dark"
+            android:textSize="12dp"
+            android:textStyle="bold"
+            app:layout_constraintBaseline_toBaselineOf="@id/tfVerificationCode"
+            app:layout_constraintStart_toEndOf="@id/tfVerificationCode" />
+
+        <Button
+            android:id="@+id/btnSignUp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_bg"
+            android:maxHeight="40dp"
+            android:minHeight="32dp"
+            android:text="Sign up"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toTopOf="@id/h0_75"
+            app:layout_constraintEnd_toStartOf="@id/v0_8"
+            app:layout_constraintStart_toStartOf="@id/v0_2"
+            app:layout_constraintTop_toBottomOf="@id/tfVerificationCode" />
+
+        <Button
+            android:id="@+id/btnSignIn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="mobıle number"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@id/v0_9"
+            app:layout_constraintStart_toEndOf="@id/btnSignUp"
+            app:layout_constraintTop_toBottomOf="@id/tfPassword" />
+
+
+        <com.huawei.hms.support.hwid.ui.HuaweiIdAuthButton
+            android:visibility="gone"
+            android:id="@+id/huaweiIdAuthButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            app:layout_constraintBottom_toTopOf="@id/h0_88"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Button
+            android:id="@+id/btnAnonymous"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Anonymous"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/huaweiIdAuthButton" />
+
+        <TextView
+            android:id="@+id/tvAlreadyHaveAccount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ALREADY HAVE AN ACCOUNT"
+            app:layout_constraintEnd_toStartOf="@id/tvAlreadyHaveAccountButton"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="@id/v0_1"
+            app:layout_constraintTop_toBottomOf="@id/h0_88" />
+
+        <TextView
+            android:id="@+id/tvAlreadyHaveAccountButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="SIGN IN"
+            android:textColor="@color/primary_dark"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="@id/v0_9"
+            app:layout_constraintStart_toEndOf="@id/tvAlreadyHaveAccount"
+            app:layout_constraintTop_toBottomOf="@id/h0_88" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -7,8 +7,11 @@ import android.graphics.ImageDecoder
 import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
 import com.canbazdev.hmskitsproject1.domain.model.Post
+import com.canbazdev.hmskitsproject1.domain.usecase.posts.InsertPostUseCase
 import com.canbazdev.hmskitsproject1.util.Constants
+import com.canbazdev.hmskitsproject1.util.Resource
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.huawei.hms.location.LocationRequest
@@ -19,6 +22,8 @@ import com.huawei.hms.mlsdk.common.MLFrame
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import java.io.IOException
 import javax.inject.Inject
 
@@ -27,7 +32,8 @@ import javax.inject.Inject
 */
 @HiltViewModel
 class PostViewModel @Inject constructor(
-    application: Application
+    application: Application,
+    private val insertPostUseCase: InsertPostUseCase
 ) : AndroidViewModel(application) {
 
     private val _postText = MutableStateFlow("")
@@ -44,25 +50,27 @@ class PostViewModel @Inject constructor(
 
     init {
         checkLocationOptions()
-        /* viewModelScope.launch {
-             insertPostUseCase.invoke().collect {
-                 when (it) {
-                     is Resource.Loading -> {
-                         println("loading")
-                     }
-                     is Resource.Success -> {
-                         println(it.data?.text)
-                     }
-                     else -> {
+        viewModelScope.launch {
+            insertPostUseCase.invoke(Post(32,"esmanur canbaz","hamza")).collect {
+                println("vm collect")
+                when (it) {
+                    is Resource.Loading -> {
+                        println("vm Loading")
+                    }
+                    is Resource.Error -> {
+                        println("vm Error + ${it.errorMessage}")
+                    }
+                    is Resource.Success -> {
+                        println("vm successsss"+it.data)
+                    }
+                }
+            }
+        }
 
-                     }
-                 }
-             }
-         }*/
-
-        Firebase.firestore.collection("posts").document("a").set(Post(1,"asd","sadsad")).addOnSuccessListener {
-            println(it)
-        }.addOnFailureListener {
+        Firebase.firestore.collection("posts").document("a").set(Post(1, "asd", "sadsad"))
+            .addOnSuccessListener {
+                println(it)
+            }.addOnFailureListener {
             println(it)
         }
 

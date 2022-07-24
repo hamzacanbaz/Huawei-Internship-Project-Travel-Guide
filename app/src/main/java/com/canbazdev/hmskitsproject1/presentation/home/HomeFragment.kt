@@ -7,6 +7,7 @@ import androidx.navigation.fragment.findNavController
 import com.canbazdev.hmskitsproject1.R
 import com.canbazdev.hmskitsproject1.databinding.FragmentHomeBinding
 import com.canbazdev.hmskitsproject1.presentation.base.BaseFragment
+import com.huawei.agconnect.auth.AGConnectAuth
 import com.huawei.hms.support.account.request.AccountAuthParams
 import com.huawei.hms.support.account.service.AccountAuthService
 import dagger.hilt.android.AndroidEntryPoint
@@ -23,6 +24,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
         binding.fabOpenPostScreen.setOnClickListener {
             findNavController().navigate(R.id.action_homeFragment_to_postFragment)
+        }
+        binding.btnSignOut.setOnClickListener {
+            AGConnectAuth.getInstance().signOut()
+            findNavController().navigate(R.id.action_homeFragment_to_registerFragment)
         }
 
         /*mAuthParam = AccountAuthParamsHelper(AccountAuthParams.DEFAULT_AUTH_REQUEST_PARAM)

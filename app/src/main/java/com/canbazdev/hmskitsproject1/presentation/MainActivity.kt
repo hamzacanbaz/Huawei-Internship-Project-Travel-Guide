@@ -45,8 +45,8 @@ class MainActivity : AppCompatActivity() {
     ) {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
-                // R.id.homeFragment -> bottomNavigationView.visibility = View.GONE
-
+                R.id.registerFragment -> bottomNavigationView.visibility = View.GONE
+                R.id.loginFragment -> bottomNavigationView.visibility = View.GONE
 
                 else -> bottomNavigationView.visibility = View.VISIBLE
 
@@ -61,7 +61,9 @@ class MainActivity : AppCompatActivity() {
             topLevelDestinationIds = setOf(
                 R.id.homeFragment,
                 R.id.mapFragment,
-                R.id.profileFragment
+                R.id.profileFragment,
+                R.id.registerFragment,
+                R.id.loginFragment
             ),
             fallbackOnNavigateUpListener = ::onSupportNavigateUp
         )

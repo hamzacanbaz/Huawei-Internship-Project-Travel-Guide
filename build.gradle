@@ -2,8 +2,9 @@
 
 buildscript {
     dependencies {
-        classpath 'com.huawei.agconnect:agcp:1.7.0.300'
+        classpath 'com.android.tools.build:gradle:7.0.2'
         classpath 'com.google.gms:google-services:4.3.13'
+        classpath 'com.huawei.agconnect:agcp:1.7.0.300'
 
     }
 }
@@ -13,7 +14,7 @@ plugins {
     id 'org.jetbrains.kotlin.android' version '1.7.0' apply false
     id 'com.google.dagger.hilt.android' version '2.42' apply false
     id 'androidx.navigation.safeargs' version '2.4.1' apply false
-
+    // id 'com.huawei.agconnect.agcp' version "1.7.0.300" apply false
 }
 
 task clean(type: Delete) {
