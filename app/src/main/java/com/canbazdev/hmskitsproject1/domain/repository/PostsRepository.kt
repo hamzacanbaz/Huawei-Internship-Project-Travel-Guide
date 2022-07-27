@@ -1,5 +1,6 @@
 package com.canbazdev.hmskitsproject1.domain.repository
 
+import android.net.Uri
 import com.canbazdev.hmskitsproject1.domain.model.Post
 import com.canbazdev.hmskitsproject1.util.Work
 
@@ -8,4 +9,7 @@ import com.canbazdev.hmskitsproject1.util.Work
 */
 interface PostsRepository {
     fun addPostToFirestore(post: Post): Work<Post>
+    fun uploadPostImageToStorage(uri: Uri): Work<Uri>
+    fun getAllPostsFromFirebase(): Work<List<Post>>
+
 }

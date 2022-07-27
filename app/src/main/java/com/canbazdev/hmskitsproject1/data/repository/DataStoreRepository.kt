@@ -23,7 +23,6 @@ class DataStoreRepository @Inject constructor(@ApplicationContext val context: C
 
     private val isOpenedFirstTime = booleanPreferencesKey("IS_OPENED_FIRST_TIME")
     private val silentSignInEnabled = booleanPreferencesKey("SILENT_SIGNIN_ENABLED")
-    private val charactersLayoutManager = intPreferencesKey("CHARACTERS_LAYOUT_MANAGER")
 
 
     val getOpenedFirstTime: Flow<Boolean> = context.dataStore.data.map {

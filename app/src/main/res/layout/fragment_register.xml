@@ -192,11 +192,11 @@
 
 
         <com.huawei.hms.support.hwid.ui.HuaweiIdAuthButton
-            android:visibility="gone"
             android:id="@+id/huaweiIdAuthButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
+            android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@id/h0_88"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

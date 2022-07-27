@@ -1,6 +1,7 @@
 package com.canbazdev.hmskitsproject1.presentation
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -13,13 +14,23 @@ import com.canbazdev.hmskitsproject1.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.huawei.agconnect.AGConnectInstance
 import com.huawei.agconnect.api.AGConnectApi
+import com.huawei.hms.site.api.SearchResultListener
+import com.huawei.hms.site.api.SearchService
+import com.huawei.hms.site.api.SearchServiceFactory
+import com.huawei.hms.site.api.model.*
 import dagger.hilt.android.AndroidEntryPoint
+import java.io.UnsupportedEncodingException
+import java.net.URLEncoder
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
+    private lateinit var searchService: SearchService
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+
 
         val bottomNavigationView: BottomNavigationView = findViewById(R.id.bottomNavbar)
         val navigationHost =
@@ -34,6 +45,7 @@ class MainActivity : AppCompatActivity() {
             AGConnectInstance.initialize(applicationContext);
         }
         AGConnectApi.getInstance().activityLifecycle().onCreate(this)
+
 
 
     }

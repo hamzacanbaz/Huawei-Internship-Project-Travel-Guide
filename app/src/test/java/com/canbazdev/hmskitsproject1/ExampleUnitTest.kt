@@ -1,5 +1,6 @@
 package com.canbazdev.hmskitsproject1
 
+import com.canbazdev.hmskitsproject1.presentation.home.HomeViewModel
 import org.junit.Test
 
 import org.junit.Assert.*
@@ -12,6 +13,8 @@ import org.junit.Assert.*
 class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
-        assertEquals(4, 2 + 2)
+        val actual = 4.0
+        val expected = 2.0+2.0
+        assertEquals("Addition",actual,expected,0.001)
     }
 }

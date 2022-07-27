@@ -3,17 +3,21 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/projects/HmsKitsProject1/app/src/main/res/drawable/black_bg_character.xml" value="0.181" />
         <entry key="..\:/projects/HmsKitsProject1/app/src/main/res/drawable/btn_bg.xml" value="0.1815" />
+        <entry key="..\:/projects/HmsKitsProject1/app/src/main/res/drawable/btn_bg_detail.xml" value="0.181" />
         <entry key="..\:/projects/HmsKitsProject1/app/src/main/res/layout/activity_login.xml" value="0.2564814814814815" />
         <entry key="..\:/projects/HmsKitsProject1/app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="..\:/projects/HmsKitsProject1/app/src/main/res/layout/content_login.xml" value="0.16197916666666667" />
         <entry key="..\:/projects/HmsKitsProject1/app/src/main/res/layout/fragment_first.xml" value="0.16197916666666667" />
         <entry key="..\:/projects/HmsKitsProject1/app/src/main/res/layout/fragment_home.xml" value="0.1" />
+        <entry key="..\:/projects/HmsKitsProject1/app/src/main/res/layout/fragment_landmark_detail.xml" value="0.27835497835497836" />
         <entry key="..\:/projects/HmsKitsProject1/app/src/main/res/layout/fragment_login.xml" value="0.27835497835497836" />
-        <entry key="..\:/projects/HmsKitsProject1/app/src/main/res/layout/fragment_post.xml" value="0.15087719298245614" />
-        <entry key="..\:/projects/HmsKitsProject1/app/src/main/res/layout/fragment_register.xml" value="0.27835497835497836" />
+        <entry key="..\:/projects/HmsKitsProject1/app/src/main/res/layout/fragment_post.xml" value="0.33" />
+        <entry key="..\:/projects/HmsKitsProject1/app/src/main/res/layout/fragment_register.xml" value="0.22807017543859648" />
         <entry key="..\:/projects/HmsKitsProject1/app/src/main/res/layout/fragment_second.xml" value="0.16197916666666667" />
         <entry key="..\:/projects/HmsKitsProject1/app/src/main/res/layout/fragment_splash.xml" value="0.175" />
+        <entry key="..\:/projects/HmsKitsProject1/app/src/main/res/layout/item_post.xml" value="0.25" />
         <entry key="..\:/projects/HmsKitsProject1/app/src/main/res/menu/bottom_navbar.xml" value="0.25925925925925924" />
       </map>
     </option>

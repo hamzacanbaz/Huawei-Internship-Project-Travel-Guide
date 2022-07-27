@@ -9,7 +9,9 @@ pluginManagement {
 
 
     }
-    plugins {}
+    plugins {
+        id 'org.jetbrains.kotlin.android' version '1.7.0'
+    }
     resolutionStrategy {
         eachPlugin {
             if (it.requested.id.getNamespace() == 'com.huawei.agconnect') {

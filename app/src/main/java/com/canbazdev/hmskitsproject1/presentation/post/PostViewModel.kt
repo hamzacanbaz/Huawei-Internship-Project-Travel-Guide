@@ -4,28 +4,29 @@ import android.app.Application
 import android.content.ContentResolver
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
+import android.location.Geocoder
 import android.net.Uri
+import android.text.Editable
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.canbazdev.hmskitsproject1.domain.model.Post
+import com.canbazdev.hmskitsproject1.domain.usecase.location.CheckLocationOptionsUseCase
+import com.canbazdev.hmskitsproject1.domain.usecase.location.RecognizeLandmarkUseCase
+import com.canbazdev.hmskitsproject1.domain.usecase.posts.InsertPostImageToStorageUseCase
 import com.canbazdev.hmskitsproject1.domain.usecase.posts.InsertPostUseCase
+import com.canbazdev.hmskitsproject1.util.ActionState
 import com.canbazdev.hmskitsproject1.util.Constants
 import com.canbazdev.hmskitsproject1.util.Resource
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
-import com.huawei.hms.location.LocationRequest
-import com.huawei.hms.location.LocationServices
-import com.huawei.hms.location.LocationSettingsRequest
-import com.huawei.hms.mlsdk.MLAnalyzerFactory
-import com.huawei.hms.mlsdk.common.MLFrame
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.io.IOException
+import java.util.*
 import javax.inject.Inject
+
 
 /*
 *   Created by hamzacanbaz on 7/19/2022
@@ -33,25 +34,64 @@ import javax.inject.Inject
 @HiltViewModel
 class PostViewModel @Inject constructor(
     application: Application,
-    private val insertPostUseCase: InsertPostUseCase
+    private val insertPostUseCase: InsertPostUseCase,
+    private val checkLocationOptionsUseCase: CheckLocationOptionsUseCase,
+    private val recognizeLandmarkUseCase: RecognizeLandmarkUseCase,
+    private val insertPostImageToStorageUseCase: InsertPostImageToStorageUseCase
 ) : AndroidViewModel(application) {
 
-    private val _postText = MutableStateFlow("")
-    val postText: StateFlow<String> = _postText
+
+    private val _post = MutableStateFlow(Post())
+    val post: StateFlow<Post> = _post
+
+    private val _isImageUploaded = MutableStateFlow(false)
+    val isImageUploaded = _isImageUploaded
 
     private val _postImage = MutableStateFlow(Uri.EMPTY)
     val postImage: StateFlow<Uri> = _postImage
+
+    private val _checkLocationOptions = MutableStateFlow<Resource<Any>>(Resource.Loading())
+    val checkLocationOptions: StateFlow<Resource<Any>> = _checkLocationOptions
+
+    private val _actionState = MutableStateFlow<ActionState?>(null)
+    val actionState: StateFlow<ActionState?> = _actionState
 
     private val _uiState = MutableStateFlow(0)
     val uiState: StateFlow<Int> = _uiState
 
 
-    private val settingsClient by lazy { LocationServices.getSettingsClient(application) }
-
     init {
         checkLocationOptions()
+
+
+    }
+
+    fun updateLandmarkName(s: Editable) {
+        _post.value = post.value.copy(landmarkName = s.toString())
+    }
+
+    fun updateLandmarkLocation(s: Editable) {
+        _post.value = post.value.copy(landmarkLocation = s.toString())
+    }
+
+    fun updateLandmarkInfo(s: Editable) {
+        _post.value = post.value.copy(landmarkInfo = s.toString())
+    }
+
+    fun setPostImage(imageUri: Uri) {
+        _post.value = post.value.copy(landmarkImage = convertUriToBitmap(imageUri).toString())
+        _postImage.value = imageUri
+        println(isImageUploaded.value)
+        _isImageUploaded.value = true
+    }
+
+    private fun sharePost(downloadUrl: String) {
         viewModelScope.launch {
-            insertPostUseCase.invoke(Post(32,"esmanur canbaz","hamza")).collect {
+            val post = this@PostViewModel.post.value.copy(
+                id = UUID.randomUUID().toString(),
+                landmarkImage = downloadUrl
+            )
+            insertPostUseCase.invoke(post).collect { it ->
                 println("vm collect")
                 when (it) {
                     is Resource.Loading -> {
@@ -61,48 +101,59 @@ class PostViewModel @Inject constructor(
                         println("vm Error + ${it.errorMessage}")
                     }
                     is Resource.Success -> {
-                        println("vm successsss"+it.data)
+                        println("vm successsss" + it.data)
+                        _uiState.value = 1
+                        _actionState.value = ActionState.NavigateToHome
+
+
                     }
                 }
             }
         }
+    }
 
-        Firebase.firestore.collection("posts").document("a").set(Post(1, "asd", "sadsad"))
-            .addOnSuccessListener {
-                println(it)
-            }.addOnFailureListener {
-            println(it)
+    fun uploadPostImageBeforeShare() {
+        viewModelScope.launch {
+            insertPostImageToStorageUseCase.invoke(postImage.value).collect {
+                when (it) {
+                    is Resource.Success -> {
+                        sharePost(it.data.toString())
+                    }
+                    is Resource.Error -> {
+                        sharePost("")
+                    }
+                    else -> {}
+                }
+            }
         }
-
     }
 
-    fun checkLocationOptions() {
+    // TODO HATA OLURSA HATA MESAJI DONDUR
 
-        val locationSettingsRequest =
-            LocationSettingsRequest.Builder().addLocationRequest(LocationRequest()).build()
-        // Check the device location settings.
-        settingsClient.checkLocationSettings(locationSettingsRequest)
-            // Define the listener for success in calling the API for checking device location settings.
-            .addOnSuccessListener { locationSettingsResponse ->
-                val locationSettingsStates = locationSettingsResponse.locationSettingsStates
-                val stringBuilder = StringBuilder()
-                stringBuilder.append("isLocationUsable=")
-                    .append(locationSettingsStates.isLocationUsable)
-                stringBuilder.append(",\nisHMSLocationUsable=")
-                    .append(locationSettingsStates.isHMSLocationUsable)
-                _uiState.value = 1
-                Log.i(Constants.TAG, "checkLocationSetting onComplete:$stringBuilder")
+    fun recognizeLandmark() {
+        viewModelScope.launch {
+            recognizeLandmarkUseCase.invoke(convertUriToBitmap(postImage.value)).collect { result ->
+                when (result) {
+                    is Resource.Loading -> println("recognize loading")
+                    is Resource.Success -> {
+                        println("recognize success ${result.data}")
+                        for (landmark in result.data!!) {
+                            _post.value = post.value.copy(landmarkName = landmark.landmark)
+                            println("${landmark.landmark} -------- ${landmark.landmarkIdentity} --------")
+                            for (c in landmark.positionInfos) {
+                                convertLatLangToAddress(c.lat, c.lng)
+                                _post.value = post.value.copy(landmarkLatitude = c.lat)
+                                _post.value = post.value.copy(landmarkLongitude = c.lng)
+                            }
+                        }
+                    }
+                    is Resource.Error -> println("recognize error ${result.errorMessage}")
+                }
             }
-            // Define callback for failure in checking the device location settings.
-            .addOnFailureListener { e ->
-                _uiState.value = -1
-
-                Log.i(Constants.TAG, "checkLocationSetting onFailure:")
-            }
+        }
     }
 
-
-    fun imageToText(imageUri: Uri) {
+    private fun convertUriToBitmap(imageUri: Uri): Bitmap {
         var bitmap: Bitmap? = null
         val contentResolver: ContentResolver = getApplication<Application>().contentResolver
         try {
@@ -112,27 +163,71 @@ class PostViewModel @Inject constructor(
         } catch (e: Exception) {
             e.printStackTrace()
         }
+        return bitmap!!
+    }
 
-        val analyzer = MLAnalyzerFactory.getInstance().localTextAnalyzer
-        val frame = MLFrame.fromBitmap(bitmap)
-        val task = analyzer.asyncAnalyseFrame(frame)
-        task.addOnSuccessListener {
-            _postText.value = it.stringValue.toString().trim()
 
-        }.addOnFailureListener {
-            println(it.localizedMessage)
+    private fun checkLocationOptions() {
+        viewModelScope.launch {
+            checkLocationOptionsUseCase.invoke().collect {
+                when (it) {
+                    // TODO SONUCA GORE UI STATE GUNCELLE
+                    is Resource.Loading -> _checkLocationOptions.value = Resource.Loading()
+                    is Resource.Success -> _checkLocationOptions.value = Resource.Success(true)
+                    is Resource.Error -> _checkLocationOptions.value =
+                        Resource.Error(it.errorMessage ?: it.errorMessage.toString())
+                }
+            }
         }
+    }
+
+    fun convertLatLangToAddress(latitude: Double, longitude: Double) {
+        val geocode = Geocoder(getApplication(), Locale.getDefault())
+        val location = ""
+        // Enable subthread to call reverse geocoding to obtain the location information.
 
         try {
-            analyzer?.stop()
+            val addresses = geocode.getFromLocation(
+                latitude, longitude,
+                1
+            )
+            if (addresses != null && addresses.size > 0) {
+                // Use handler to update UI after the address is updated successfully.
+                Log.i(Constants.TAG, "addresses=" + addresses.size)
+                for (address in addresses) {
+                    println(address.locality + " " + address.thoroughfare + " " + address.postalCode + " " + address.subAdminArea + "/" + address.adminArea + " " + address.countryName)
+                    val landmarkAddress =
+                        address.locality + " " + address.thoroughfare + " " + address.postalCode + " " + address.subAdminArea + "/" + address.adminArea + " " + address.countryName
+                    _post.value = post.value.copy(
+                        landmarkLocation = landmarkAddress.replace("null", "").trim()
+                    )
+
+                }
+            }
         } catch (e: IOException) {
-            // Exception handling.
+            Log.e(Constants.TAG, "reverseGeocode wrong ")
         }
+
     }
 
-    fun setPostImage(imageUri: Uri) {
-        _postImage.value = imageUri
-    }
+    /* fun imageToText(imageUri: Uri) {
+     val bitmap = convertUriToBitmap(imageUri)
+     val analyzer = MLAnalyzerFactory.getInstance().localTextAnalyzer
+     val frame = MLFrame.fromBitmap(bitmap)
+     val task = analyzer.asyncAnalyseFrame(frame)
+     task.addOnSuccessListener {
+         _postText.value = it.stringValue.toString().trim()
+
+     }.addOnFailureListener {
+         println(it.localizedMessage)
+     }
+
+     try {
+         analyzer?.stop()
+     } catch (e: IOException) {
+         // Exception handling.
+     }
+ }*/
 
 
 }

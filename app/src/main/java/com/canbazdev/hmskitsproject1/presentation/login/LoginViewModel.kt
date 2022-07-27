@@ -77,7 +77,7 @@ class LoginViewModel @Inject constructor(
 
     fun checkUserLogin() {
         viewModelScope.launch {
-            // TODO CHANGE THIS USECASE
+            // TODO CHANGE THIS USE CASE
             // TODO NOW, IT IS WORKING WRONG
             checkUserLoginUseCase.invoke(this).collect { status ->
                 when (status) {

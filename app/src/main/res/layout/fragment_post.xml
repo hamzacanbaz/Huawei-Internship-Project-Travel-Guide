@@ -8,6 +8,7 @@
         <variable
             name="viewmodel"
             type="com.canbazdev.hmskitsproject1.presentation.post.PostViewModel" />
+
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -15,43 +16,194 @@
         android:layout_height="match_parent"
         tools:context=".presentation.post.PostFragment">
 
-        <!-- TODO: Update blank fragment layout -->
-        <Button
-            android:id="@+id/btnPickImage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <ProgressBar
+            android:id="@+id/progressbar"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:progressBarThickness="10dp" />
 
-        <ImageView
-            android:setPostImage="@{viewmodel.postImage}"
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/v0_1"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.1" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/v0_2"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.2" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/v0_8"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.8" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/h0_1"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.1" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/h0_4"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.4" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/h0_48"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.44" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/h0_75"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.80" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/h0_92"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.92" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/h0_88"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.88" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/h0_82"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.82" />
+
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/v0_9"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.9" />
+
+        <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/ivImage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/btnPickImage" />
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:setPostImage="@{viewmodel.postImage}"
+            app:layout_constraintBottom_toTopOf="@id/h0_4"
+            app:layout_constraintEnd_toEndOf="@id/v0_9"
+            app:layout_constraintStart_toStartOf="@id/v0_1"
+            app:layout_constraintTop_toBottomOf="@id/h0_1"
+            app:lottie_autoPlay="true"
+            app:lottie_rawRes="@raw/choose_gallery" />
 
         <TextView
-            android:id="@+id/tvText"
+            android:id="@+id/tvRecognizeLandmark"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="60dp"
-            android:layout_marginBottom="51dp"
-            android:text="@{viewmodel.postText}"
+            android:enabled="false"
+            android:setButtonEnabled="@{viewmodel.isImageUploaded}"
+            android:text="Recognize"
+            android:textColor="@color/primary_dark"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/h0_48"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/ivImage" />
+            app:layout_constraintTop_toTopOf="@id/h0_4" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tfName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="Name"
+            app:layout_constraintBottom_toTopOf="@id/tfLocation"
+            app:layout_constraintEnd_toEndOf="@id/v0_9"
+            app:layout_constraintStart_toStartOf="@id/v0_1"
+            app:layout_constraintTop_toTopOf="@id/h0_48"
+            app:startIconDrawable="@drawable/ic_baseline_mail_24">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:afterTextChanged="@{viewmodel.updateLandmarkName}"
+                android:text="@{viewmodel.post.landmarkName}" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tfLocation"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="Location"
+            app:layout_constraintBottom_toTopOf="@id/tfInfo"
+            app:layout_constraintEnd_toEndOf="@id/v0_9"
+            app:layout_constraintStart_toStartOf="@id/v0_1"
+            app:layout_constraintTop_toBottomOf="@id/tfName"
+            app:startIconDrawable="@drawable/ic_baseline_vpn_key_24">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etLocation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:afterTextChanged="@{viewmodel.updateLandmarkLocation}"
+                android:inputType="text"
+                android:text="@{viewmodel.post.landmarkLocation}" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tfInfo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="Info"
+            app:layout_constraintBottom_toTopOf="@id/h0_82"
+            app:layout_constraintEnd_toEndOf="@id/v0_9"
+            app:layout_constraintStart_toStartOf="@id/v0_1"
+            app:layout_constraintTop_toBottomOf="@id/tfLocation"
+            app:startIconDrawable="@drawable/ic_baseline_vpn_key_24">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etInfo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:afterTextChanged="@{viewmodel.updateLandmarkInfo}"
+                android:inputType="text" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
 
         <Button
             android:id="@+id/btnPost"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:background="@drawable/btn_bg"
             android:text="Share"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toTopOf="@id/h0_92"
+            app:layout_constraintEnd_toEndOf="@id/v0_8"
+            app:layout_constraintStart_toStartOf="@id/v0_2" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
