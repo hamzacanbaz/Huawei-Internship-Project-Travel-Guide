@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewmodel"
+            type="com.canbazdev.hmskitsproject1.presentation.detail_post.LandmarkDetailViewModel" />
+
+        <variable
+            name="post"
+            type="com.canbazdev.hmskitsproject1.domain.model.landmark.Post" />
+    </data>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:context=".presentation.detail_post.LandmarkDetailFragment">
+
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/v0_1"
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.1" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/v0_2"
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.2" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/v0_8"
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.8" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/h0_1"
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.07" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/h0_4"
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.4" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/h0_48"
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.44" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/h0_75"
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.80" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/h0_92"
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.92" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/h0_88"
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.88" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/h0_82"
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.82" />
+
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/v0_9"
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.9" />
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:loadImageWithRadius="@{viewmodel.landmark.landmarkImage}"
+                app:layout_constraintBottom_toBottomOf="@id/h0_4"
+                app:layout_constraintEnd_toEndOf="@id/v0_9"
+                app:layout_constraintStart_toStartOf="@id/v0_1"
+                app:layout_constraintTop_toTopOf="@id/h0_1"
+                tools:src="@drawable/louvre" />
+
+            <TextView
+                android:id="@+id/tvName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@{viewmodel.landmark.landmarkName}"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toEndOf="@id/v0_9"
+                app:layout_constraintStart_toStartOf="@id/v0_1"
+                app:layout_constraintTop_toBottomOf="@id/h0_48"
+                tools:text="Landmark Name" />
+
+            <TextView
+                android:id="@+id/tvInfo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@{viewmodel.landmark.landmarkInfo}"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toEndOf="@id/v0_9"
+                app:layout_constraintStart_toStartOf="@id/v0_1"
+                app:layout_constraintTop_toBottomOf="@id/tvName"
+                tools:text="In publishing and graphic design, Lorem ipsum is a placeholder textIn publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content.  commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. " />
+
+            <TextView
+                android:id="@+id/tvLocation"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@{viewmodel.landmark.landmarkLocation}"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toEndOf="@id/v0_9"
+                app:layout_constraintStart_toStartOf="@id/v0_1"
+                app:layout_constraintTop_toBottomOf="@id/tvInfo"
+                tools:text="Landmark Location" />
+
+            <TextView
+                android:id="@+id/tvAuthor"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Su anlik bos gelmesi lazim"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toEndOf="@id/v0_9"
+                app:layout_constraintStart_toStartOf="@id/v0_1"
+                app:layout_constraintTop_toBottomOf="@id/tvLocation"
+                tools:text="Landmark Author" />
+
+            <Button
+                android:id="@+id/btnAddWishList"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/btn_bg_detail"
+                android:text="Add To List"
+                android:textColor="@color/white"
+                app:layout_constraintEnd_toEndOf="@id/v0_8"
+                app:layout_constraintStart_toStartOf="@id/v0_2"
+                app:layout_constraintTop_toBottomOf="@id/tvAuthor" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+
+</layout>

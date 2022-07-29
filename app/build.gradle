@@ -199,6 +199,10 @@ dependencies {
     // Huawei Map Kit
     implementation 'com.huawei.hms:maps:6.2.0.301'
 
+    // Read More
+    implementation 'kr.co.prnd:readmore-textview:1.0.0'
+
+
 
 
 
