@@ -1,6 +1,5 @@
 package com.canbazdev.hmskitsproject1.presentation.home
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
@@ -8,7 +7,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.canbazdev.hmskitsproject1.R
 import com.canbazdev.hmskitsproject1.databinding.FragmentHomeBinding
-import com.canbazdev.hmskitsproject1.domain.model.Post
+import com.canbazdev.hmskitsproject1.domain.model.landmark.Post
 import com.canbazdev.hmskitsproject1.presentation.base.BaseFragment
 import com.canbazdev.hmskitsproject1.util.ActionState
 import com.huawei.agconnect.auth.AGConnectAuth
@@ -50,6 +49,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                     is ActionState.NavigateTDetailLandmark -> {
                         goToLandmarkDetail(it.post)
                     }
+                    is ActionState.NavigateToRegister -> {
+                        findNavController().navigate(R.id.action_homeFragment_to_registerFragment)
+                    }
                     else -> {}
                 }
             }
@@ -60,9 +62,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
             findNavController().navigate(R.id.action_homeFragment_to_postFragment)
         }
         binding.btnSignOut.setOnClickListener {
+            viewModel.clearUserInfo()
             AGConnectAuth.getInstance().signOut()
             viewModel.unableSilentSignIn()
-            findNavController().navigate(R.id.action_homeFragment_to_registerFragment)
         }
 
         /*mAuthParam = AccountAuthParamsHelper(AccountAuthParams.DEFAULT_AUTH_REQUEST_PARAM)
@@ -87,11 +89,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
          }
      }*/
 
-    private fun goToLandmarkDetail( post: Post) {
+    private fun goToLandmarkDetail(post: Post) {
         val bundle = Bundle()
-        bundle.putSerializable("landmark",post)
-        if (findNavController().currentDestination?.id==R.id.homeFragment)
-        findNavController().navigate(R.id.action_homeFragment_to_landmarkDetailFragment,bundle)
+        bundle.putSerializable("landmark", post)
+        if (findNavController().currentDestination?.id == R.id.homeFragment)
+            findNavController().navigate(R.id.action_homeFragment_to_landmarkDetailFragment, bundle)
 
     }
 }

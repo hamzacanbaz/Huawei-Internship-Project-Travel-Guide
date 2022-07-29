@@ -14,6 +14,8 @@
             android:id="@+id/action_homeFragment_to_postFragment"
             app:destination="@id/postFragment" />
         <action
+            app:popUpTo="@id/homeFragment"
+            app:popUpToInclusive="true"
             android:id="@+id/action_homeFragment_to_registerFragment"
             app:destination="@id/registerFragment" />
         <action

@@ -2,13 +2,14 @@ package com.canbazdev.hmskitsproject1.di
 
 import android.app.Application
 import android.content.Context
-import com.canbazdev.hmskitsproject1.data.repository.*
-import com.canbazdev.hmskitsproject1.domain.repository.LandMarksRepository
+import com.canbazdev.hmskitsproject1.data.repository.LocationRepositoryImpl
+import com.canbazdev.hmskitsproject1.data.repository.LoginRepositoryImpl
+import com.canbazdev.hmskitsproject1.data.repository.PostsRepositoryImpl
+import com.canbazdev.hmskitsproject1.data.repository.RemoteDataSourceImpl
 import com.canbazdev.hmskitsproject1.domain.repository.LocationRepository
 import com.canbazdev.hmskitsproject1.domain.repository.LoginRepository
 import com.canbazdev.hmskitsproject1.domain.repository.PostsRepository
-import com.canbazdev.hmskitsproject1.domain.source.LocationDataSource
-import com.canbazdev.hmskitsproject1.domain.source.UserDataSource
+import com.canbazdev.hmskitsproject1.domain.source.RemoteDataSource
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.huawei.hms.site.api.SearchService
@@ -41,7 +42,6 @@ object RepositoryModule {
 
 
     @Provides
-    @Singleton
     fun providePostsRepository(postsRef: CollectionReference): PostsRepository {
         return PostsRepositoryImpl(postsRef)
     }
@@ -55,29 +55,17 @@ object RepositoryModule {
     @Provides
     fun providesUserRemoteDataSource(
         postsRef: CollectionReference,
+        db: FirebaseFirestore,
         @ApplicationContext context: Context,
         application: Application,
-    ): UserDataSource {
-        return UserDataSourceImpl(
+    ): RemoteDataSource {
+        return RemoteDataSourceImpl(
             providePostsRepository(postsRef),
-            provideLoginRepository(context),
+            provideLoginRepository(context, db),
             provideLocationRepository(application)
         )
     }
 
-    @Provides
-    fun providesLocationRemoteDataSource(
-        application: Application
-    ): LocationDataSource {
-        return LocationDataSourceImpl(provideLocationRepository(application))
-    }
-
-    @Provides
-    fun providesLandMarksRepository(
-        remoteDataSource: UserDataSource
-    ): LandMarksRepository {
-        return LandMarksRepositoryImpl(remoteDataSource)
-    }
 
     @Provides
     fun provideLocationRepository(
@@ -87,7 +75,10 @@ object RepositoryModule {
     }
 
     @Provides
-    fun provideLoginRepository(@ApplicationContext context: Context): LoginRepository =
-        LoginRepositoryImpl(context)
+    fun provideLoginRepository(
+        @ApplicationContext context: Context,
+        db: FirebaseFirestore
+    ): LoginRepository =
+        LoginRepositoryImpl(context, db)
 
 }

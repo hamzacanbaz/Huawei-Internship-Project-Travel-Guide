@@ -1,4 +1,4 @@
-package com.canbazdev.hmskitsproject1.domain.model
+package com.canbazdev.hmskitsproject1.domain.model.landmark
 
 import java.io.Serializable
 
@@ -12,5 +12,6 @@ data class Post(
     var landmarkInfo: String? = null,
     var landmarkImage: String? = null,
     var landmarkLatitude: Double? = null,
-    var landmarkLongitude: Double? = null
-):Serializable
+    var landmarkLongitude: Double? = null,
+    var authorId: String? = null
+) : Serializable

@@ -8,8 +8,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.canbazdev.hmskitsproject1.R
 import com.canbazdev.hmskitsproject1.databinding.FragmentRegisterBinding
+import com.canbazdev.hmskitsproject1.domain.model.login.UserFirebase
 import com.canbazdev.hmskitsproject1.presentation.base.BaseFragment
-import com.huawei.agconnect.auth.AGConnectAuth
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 
@@ -46,8 +46,17 @@ class RegisterFragment : BaseFragment<FragmentRegisterBinding>(R.layout.fragment
     private fun observeIsUserSignedUpSuccessfully() {
         lifecycleScope.launchWhenCreated {
             viewModel.isUserSignedUp.collect { isSignedUp ->
-                println(AGConnectAuth.getInstance().currentUser)
-                if (isSignedUp) findNavController().navigate(R.id.action_registerFragment_to_homeFragment)
+                if (isSignedUp) {
+                    val bundle = Bundle()
+                    bundle.putSerializable(
+                        "userInfo",
+                        UserFirebase(id = viewModel.userId.value, email = viewModel.userEmail.value)
+                    )
+                    findNavController().navigate(
+                        R.id.action_registerFragment_to_homeFragment,
+                        bundle
+                    )
+                }
             }
         }
     }

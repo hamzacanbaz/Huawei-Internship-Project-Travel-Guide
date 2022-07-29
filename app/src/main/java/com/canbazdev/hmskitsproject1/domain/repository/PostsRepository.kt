@@ -1,7 +1,7 @@
 package com.canbazdev.hmskitsproject1.domain.repository
 
 import android.net.Uri
-import com.canbazdev.hmskitsproject1.domain.model.Post
+import com.canbazdev.hmskitsproject1.domain.model.landmark.Post
 import com.canbazdev.hmskitsproject1.util.Work
 
 /*

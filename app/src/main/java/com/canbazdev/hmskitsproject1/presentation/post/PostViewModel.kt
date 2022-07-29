@@ -10,7 +10,7 @@ import android.text.Editable
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.canbazdev.hmskitsproject1.domain.model.Post
+import com.canbazdev.hmskitsproject1.domain.model.landmark.Post
 import com.canbazdev.hmskitsproject1.domain.usecase.location.CheckLocationOptionsUseCase
 import com.canbazdev.hmskitsproject1.domain.usecase.location.RecognizeLandmarkUseCase
 import com.canbazdev.hmskitsproject1.domain.usecase.posts.InsertPostImageToStorageUseCase
@@ -18,6 +18,7 @@ import com.canbazdev.hmskitsproject1.domain.usecase.posts.InsertPostUseCase
 import com.canbazdev.hmskitsproject1.util.ActionState
 import com.canbazdev.hmskitsproject1.util.Constants
 import com.canbazdev.hmskitsproject1.util.Resource
+import com.huawei.agconnect.auth.AGConnectAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -59,6 +60,9 @@ class PostViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(0)
     val uiState: StateFlow<Int> = _uiState
 
+    private val _recognizeState = MutableStateFlow(-1)
+    val recognizeState: StateFlow<Int> = _recognizeState
+
 
     init {
         checkLocationOptions()
@@ -89,7 +93,8 @@ class PostViewModel @Inject constructor(
         viewModelScope.launch {
             val post = this@PostViewModel.post.value.copy(
                 id = UUID.randomUUID().toString(),
-                landmarkImage = downloadUrl
+                landmarkImage = downloadUrl,
+                authorId = AGConnectAuth.getInstance().currentUser.uid
             )
             insertPostUseCase.invoke(post).collect { it ->
                 println("vm collect")
@@ -134,7 +139,9 @@ class PostViewModel @Inject constructor(
         viewModelScope.launch {
             recognizeLandmarkUseCase.invoke(convertUriToBitmap(postImage.value)).collect { result ->
                 when (result) {
-                    is Resource.Loading -> println("recognize loading")
+                    is Resource.Loading -> {
+                        _recognizeState.value = 0
+                    }
                     is Resource.Success -> {
                         println("recognize success ${result.data}")
                         for (landmark in result.data!!) {
@@ -146,8 +153,12 @@ class PostViewModel @Inject constructor(
                                 _post.value = post.value.copy(landmarkLongitude = c.lng)
                             }
                         }
+                        _recognizeState.value = 1
                     }
-                    is Resource.Error -> println("recognize error ${result.errorMessage}")
+                    is Resource.Error -> {
+                        _recognizeState.value = -2
+                        println("recognize error ${result.errorMessage}")
+                    }
                 }
             }
         }
@@ -181,10 +192,9 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    fun convertLatLangToAddress(latitude: Double, longitude: Double) {
+    private fun convertLatLangToAddress(latitude: Double, longitude: Double) {
         val geocode = Geocoder(getApplication(), Locale.getDefault())
-        val location = ""
-        // Enable subthread to call reverse geocoding to obtain the location information.
+
 
         try {
             val addresses = geocode.getFromLocation(
@@ -192,17 +202,16 @@ class PostViewModel @Inject constructor(
                 1
             )
             if (addresses != null && addresses.size > 0) {
-                // Use handler to update UI after the address is updated successfully.
-                Log.i(Constants.TAG, "addresses=" + addresses.size)
-                for (address in addresses) {
-                    println(address.locality + " " + address.thoroughfare + " " + address.postalCode + " " + address.subAdminArea + "/" + address.adminArea + " " + address.countryName)
-                    val landmarkAddress =
-                        address.locality + " " + address.thoroughfare + " " + address.postalCode + " " + address.subAdminArea + "/" + address.adminArea + " " + address.countryName
-                    _post.value = post.value.copy(
-                        landmarkLocation = landmarkAddress.replace("null", "").trim()
-                    )
 
-                }
+                Log.i(Constants.TAG, "addresses=" + addresses.size)
+                val address = addresses[0]
+                val landmarkAddress =
+                    address.thoroughfare + ", " + address.postalCode + " " + address.subAdminArea + "/" + address.adminArea + ", " + address.countryName
+                println(landmarkAddress)
+                _post.value = post.value.copy(
+                    landmarkLocation = landmarkAddress.replace("null", "").trim()
+                )
+
             }
         } catch (e: IOException) {
             Log.e(Constants.TAG, "reverseGeocode wrong ")

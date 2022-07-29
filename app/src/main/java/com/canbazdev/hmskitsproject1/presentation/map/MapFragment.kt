@@ -1,60 +1,172 @@
 package com.canbazdev.hmskitsproject1.presentation.map
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
+import android.os.Looper
+import android.util.Log
 import android.view.View
-import android.view.ViewGroup
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.canbazdev.hmskitsproject1.R
+import com.canbazdev.hmskitsproject1.databinding.FragmentMapBinding
+import com.canbazdev.hmskitsproject1.presentation.base.BaseFragment
+import com.huawei.hms.location.*
+import com.huawei.hms.maps.*
+import com.huawei.hms.maps.model.BitmapDescriptorFactory
+import com.huawei.hms.maps.model.CameraPosition
+import com.huawei.hms.maps.model.LatLng
+import com.huawei.hms.maps.model.MarkerOptions
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+@AndroidEntryPoint
+class MapFragment : BaseFragment<FragmentMapBinding>(R.layout.fragment_map), OnMapReadyCallback {
 
-/**
- * A simple [Fragment] subclass.
- * Use the [MapFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class MapFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private var hMap: HuaweiMap? = null
+    private var mMapView: MapView? = null
+    private lateinit var cameraPosition: CameraPosition
+    private lateinit var cameraUpdate: CameraUpdate
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+    private val viewmodel: MapViewModel by viewModels()
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+    private lateinit var mLocationCallback: LocationCallback
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context)
+        val mLocationRequest = LocationRequest()
+        mLocationRequest.apply {
+            this.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+            this.numUpdates = 1
+        }
+        initializeLocationCallback()
+        getLocation(mLocationRequest, mLocationCallback)
+
+        initializeMap(savedInstanceState)
+
+
+    }
+
+    private fun initializeMap(savedInstanceState: Bundle?) {
+        var mapViewBundle: Bundle? = null
+        if (savedInstanceState != null) {
+            mapViewBundle = savedInstanceState.getBundle("MapViewBundleKey")
+        }
+        mMapView = binding.mapView
+        mMapView?.apply {
+            onCreate(mapViewBundle)
+            getMapAsync(this@MapFragment)
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_map, container, false)
+    override fun onMapReady(map: HuaweiMap?) {
+        Log.d("TAG", "onMapReady: ")
+        hMap = map
+
+        hMap?.isMyLocationEnabled = true
+        hMap?.uiSettings?.isMyLocationButtonEnabled = true
+
+        addMarkersToLandmarks()
+        hMap?.uiSettings?.isMyLocationButtonEnabled
+        updateCamera()
+
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment MapFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            MapFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    private fun addMarkersToLandmarks() {
+        lifecycleScope.launchWhenCreated {
+            viewmodel.postsList.collect {
+                it.forEach { landmark ->
+                    hMap?.addMarker(
+                        MarkerOptions()
+                            .icon(BitmapDescriptorFactory.defaultMarker())
+                            .title(landmark.landmarkName)
+                            .position(
+                                landmark.landmarkLongitude?.let { it1 ->
+                                    landmark.landmarkLatitude?.let { it2 ->
+                                        LatLng(
+                                            it2,
+                                            it1
+                                        )
+                                    }
+                                }
+                            )
+
+                    )
                 }
             }
+        }
+    }
+
+    private fun updateCamera() {
+        lifecycleScope.launchWhenCreated {
+            viewmodel.latLng.collect {
+                cameraPosition = CameraPosition.builder()
+                    .target(it)
+                    .zoom(10f)
+                    .bearing(2.0f)
+                    .tilt(2.5f).build()
+                cameraUpdate = CameraUpdateFactory.newCameraPosition(cameraPosition)
+                hMap?.moveCamera(cameraUpdate)
+
+            }
+        }
+    }
+
+    private fun getLocation(
+        mLocationRequest: LocationRequest,
+        mLocationCallback: LocationCallback
+    ) {
+        fusedLocationProviderClient.requestLocationUpdates(
+            mLocationRequest,
+            mLocationCallback,
+            Looper.getMainLooper()
+        )
+            .addOnSuccessListener {
+                println("ah")
+            }
+            .addOnFailureListener {
+                println("failure")
+            }
+    }
+
+    private fun initializeLocationCallback() {
+        mLocationCallback =
+            object : LocationCallback() {
+                override fun onLocationResult(locationResult: LocationResult) {
+                    println("got")
+                    viewmodel.latLng.value = LatLng(
+                        locationResult.lastLocation.latitude,
+                        locationResult.lastLocation.longitude
+                    )
+
+
+                }
+            }
+    }
+
+
+    override fun onStart() {
+        super.onStart()
+        mMapView?.onStart();
+    }
+
+    override fun onStop() {
+        super.onStop()
+        mMapView?.onStop();
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mMapView?.onDestroy();
+    }
+
+    override fun onPause() {
+        super.onPause()
+        mMapView?.onPause();
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mMapView?.onResume()
     }
 }

@@ -1,7 +1,6 @@
 package com.canbazdev.hmskitsproject1.presentation
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -14,22 +13,20 @@ import com.canbazdev.hmskitsproject1.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.huawei.agconnect.AGConnectInstance
 import com.huawei.agconnect.api.AGConnectApi
-import com.huawei.hms.site.api.SearchResultListener
+import com.huawei.hms.maps.HuaweiMap
+import com.huawei.hms.maps.MapsInitializer
+import com.huawei.hms.maps.OnMapReadyCallback
+import com.huawei.hms.maps.SupportMapFragment
 import com.huawei.hms.site.api.SearchService
-import com.huawei.hms.site.api.SearchServiceFactory
-import com.huawei.hms.site.api.model.*
 import dagger.hilt.android.AndroidEntryPoint
-import java.io.UnsupportedEncodingException
-import java.net.URLEncoder
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var searchService: SearchService
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
 
 
         val bottomNavigationView: BottomNavigationView = findViewById(R.id.bottomNavbar)
@@ -48,6 +45,7 @@ class MainActivity : AppCompatActivity() {
 
 
 
+
     }
 
     private fun setUpBottomNavigationView(
@@ -57,11 +55,25 @@ class MainActivity : AppCompatActivity() {
     ) {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
-                R.id.registerFragment -> bottomNavigationView.visibility = View.GONE
-                R.id.loginFragment -> bottomNavigationView.visibility = View.GONE
+                R.id.registerFragment -> {
+                    bottomNavigationView.visibility = View.GONE
+                    toolbar.visibility = View.VISIBLE
+                }
 
-                else -> bottomNavigationView.visibility = View.VISIBLE
+                R.id.loginFragment -> {
+                    bottomNavigationView.visibility = View.GONE
+                    toolbar.visibility = View.VISIBLE
+                }
 
+                R.id.splashFragment -> {
+                    bottomNavigationView.visibility = View.GONE
+                    toolbar.visibility = View.GONE
+                }
+
+                else -> {
+                    toolbar.visibility = View.VISIBLE
+                    bottomNavigationView.visibility = View.VISIBLE
+                }
             }
         }
         bottomNavigationView.setupWithNavController(navController)
@@ -80,6 +92,10 @@ class MainActivity : AppCompatActivity() {
             fallbackOnNavigateUpListener = ::onSupportNavigateUp
         )
         toolbar.setupWithNavController(navController, appBarConfiguration)
+    }
+
+    override fun onMapReady(p0: HuaweiMap?) {
+        TODO("Not yet implemented")
     }
 
 }

@@ -196,6 +196,10 @@ dependencies {
     // Site Kit
     implementation 'com.huawei.hms:site:6.4.0.304'
 
+    // Huawei Map Kit
+    implementation 'com.huawei.hms:maps:6.2.0.301'
+
+
 
 
 

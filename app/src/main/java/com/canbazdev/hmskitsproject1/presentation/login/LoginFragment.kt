@@ -7,6 +7,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.canbazdev.hmskitsproject1.R
 import com.canbazdev.hmskitsproject1.databinding.FragmentLoginBinding
+import com.canbazdev.hmskitsproject1.domain.model.login.UserFirebase
 import com.canbazdev.hmskitsproject1.presentation.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
@@ -36,9 +37,6 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(R.layout.fragment_login
 
         }
 
-        binding.btnAnonymous.setOnClickListener {
-            viewModel.signOutHuawei()
-        }
         binding.tvNoAccountButton.setOnClickListener {
             goToRegisterFragment()
         }
@@ -47,7 +45,14 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(R.layout.fragment_login
         }
         lifecycleScope.launchWhenCreated {
             viewModel.isUserSignedIn.collect {
-                if (it) findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+                if (it) {
+                    val bundle = Bundle()
+                    bundle.putSerializable(
+                        "userInfo",
+                        UserFirebase(viewModel.userId.value, viewModel.userEmail.value)
+                    )
+                    findNavController().navigate(R.id.action_loginFragment_to_homeFragment, bundle)
+                }
             }
             viewModel.isUserSignedIn.collect {
                 println("signed in $it")

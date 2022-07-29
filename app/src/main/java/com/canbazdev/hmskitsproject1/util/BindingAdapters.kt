@@ -20,7 +20,7 @@ fun setPostImage(view: ImageView, uri: Uri) {
 
 @BindingAdapter("android:loadImage")
 fun loadImage(view: ImageView, url: String?) {
-    if (url != null) Glide.with(view.context).load(url).into(view)
+    if (url != null) Glide.with(view.context).load(url).centerCrop().into(view)
 }
 
 @BindingAdapter("android:loadImageWithRadius")

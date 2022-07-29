@@ -14,15 +14,12 @@ import com.canbazdev.hmskitsproject1.R
 import com.canbazdev.hmskitsproject1.databinding.FragmentPostBinding
 import com.canbazdev.hmskitsproject1.presentation.base.BaseFragment
 import com.canbazdev.hmskitsproject1.util.ActionState
+import com.canbazdev.hmskitsproject1.util.LoadingDialog
 import com.canbazdev.hmskitsproject1.util.PermissionUtils
 import com.canbazdev.hmskitsproject1.util.Resource
 import com.github.dhaval2404.imagepicker.ImagePicker
-import com.huawei.hms.location.FusedLocationProviderClient
-import com.huawei.hms.location.LocationRequest
-import com.huawei.hms.location.LocationServices
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
 
@@ -31,7 +28,6 @@ class PostFragment : BaseFragment<FragmentPostBinding>(R.layout.fragment_post),
     EasyPermissions.PermissionCallbacks {
 
     private val viewModel: PostViewModel by viewModels()
-    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -39,7 +35,6 @@ class PostFragment : BaseFragment<FragmentPostBinding>(R.layout.fragment_post),
         requestPermissions()
         binding.viewmodel = viewModel
         observe()
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context)
 
 
         binding.tvRecognizeLandmark.setOnClickListener {
@@ -50,17 +45,22 @@ class PostFragment : BaseFragment<FragmentPostBinding>(R.layout.fragment_post),
         //  ui_state değişmezse sıçtın, değişirse dialog kaldır. Tamama basınca viewModel.checkLocationOptions() çalışsın
 
 
-        val mLocationRequest = LocationRequest()
-        mLocationRequest.apply {
-            this.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-            this.numUpdates = 1
-        }
         binding.ivImage.setOnClickListener {
             pickImage()
         }
         binding.btnPost.setOnClickListener {
             //viewModel.sharePost()
             viewModel.uploadPostImageBeforeShare()
+        }
+
+        lifecycleScope.launchWhenCreated {
+            val dialog = LoadingDialog(context!!, "Recognizing")
+            viewModel.recognizeState.collect {
+                when (it) {
+                    0 -> dialog.startLoadingDialog()
+                    1 -> dialog.dismissDialog()
+                }
+            }
         }
 
         /* val mLocationCallback: LocationCallback
@@ -96,22 +96,6 @@ class PostFragment : BaseFragment<FragmentPostBinding>(R.layout.fragment_post),
 
     private fun observe() {
 
-        lifecycleScope.launch {
-            viewModel.uiState.collect {
-                when (it) {
-                    1 -> {
-                        binding.progressbar.visibility = View.VISIBLE
-                        println("Loading")
-                    }
-                    1 -> {
-                        println("Success")
-                        binding.progressbar.visibility = View.GONE
-                    }
-                    -1 -> println("Fail")
-                    else -> {}
-                }
-            }
-        }
         lifecycleScope.launchWhenCreated {
             viewModel.actionState.collect { state ->
                 when (state) {
@@ -206,7 +190,7 @@ class PostFragment : BaseFragment<FragmentPostBinding>(R.layout.fragment_post),
     private fun navigateToHomeFragment() {
         if (findNavController().currentDestination?.id == R.id.postFragment) {
             println("navigate to home")
-
+            findNavController().navigate(R.id.action_postFragment_to_homeFragment)
         }
     }
 }

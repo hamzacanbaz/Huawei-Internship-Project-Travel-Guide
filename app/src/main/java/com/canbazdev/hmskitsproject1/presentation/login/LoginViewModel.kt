@@ -48,6 +48,9 @@ class LoginViewModel @Inject constructor(
     private var _isUserSignedIn = MutableStateFlow(false)
     val isUserSignedIn: StateFlow<Boolean> = _isUserSignedIn
 
+    private val _userId = MutableStateFlow("")
+    val userId: StateFlow<String> = _userId
+
 
     init {
         _uiState.value = -1
@@ -103,6 +106,7 @@ class LoginViewModel @Inject constructor(
                     when (result) {
                         is Resource.Loading -> println("loading")
                         is Resource.Success -> {
+                            _userId.value = result.data.toString()
                             _isUserSignedIn.value = true
                         }
                         is Resource.Error -> println(result.errorMessage)

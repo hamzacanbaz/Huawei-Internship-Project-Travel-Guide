@@ -41,7 +41,8 @@ class SplashFragment : Fragment() {
         lifecycleScope.launchWhenCreated {
             viewModel.isUserSignedIn.collect {
                 println("sgined in $it")
-                navigateToHomeFragment()
+                if (it)
+                    navigateToHomeFragment()
 
             }
         }
