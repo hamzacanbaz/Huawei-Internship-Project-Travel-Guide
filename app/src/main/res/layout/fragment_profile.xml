@@ -9,7 +9,11 @@
             name="viewmodel"
             type="com.canbazdev.hmskitsproject1.presentation.profile.ProfileViewModel" />
     </data>
-
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/compose_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+<!--
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -62,7 +66,8 @@
             android:text="@{viewmodel.userId}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/gl_h_0_35" />
+            app:layout_constraintTop_toBottomOf="@id/gl_h_0_35"
+            tools:text="827342349823649234280934" />
 
         <TextView
             android:id="@+id/tvUserEmail"
@@ -72,7 +77,9 @@
             android:text="@{viewmodel.userEmail}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvUserId" />
+            app:layout_constraintTop_toBottomOf="@id/tvUserId"
+            tools:text="hamzacanbazdev@gmail.com" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+-->
 </layout>

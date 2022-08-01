@@ -1,14 +1,20 @@
 package com.canbazdev.hmskitsproject1.presentation.home
 
+import android.app.Application
+import android.text.TextUtils
+import android.util.Log
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.canbazdev.hmskitsproject1.data.repository.DataStoreRepository
 import com.canbazdev.hmskitsproject1.domain.model.landmark.Post
 import com.canbazdev.hmskitsproject1.domain.model.login.UserFirebase
+import com.canbazdev.hmskitsproject1.domain.usecase.notification.SendNotificationUseCase
 import com.canbazdev.hmskitsproject1.domain.usecase.posts.GetAllPostsFromFirebaseUseCase
 import com.canbazdev.hmskitsproject1.util.ActionState
 import com.canbazdev.hmskitsproject1.util.Resource
+import com.huawei.agconnect.config.AGConnectServicesConfig
+import com.huawei.hms.aaid.HmsInstanceId
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,10 +24,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
+    application: Application,
     val repository: DataStoreRepository,
     private val getAllPostsFromFirebaseUseCase: GetAllPostsFromFirebaseUseCase,
-    private val savedStateHandle: SavedStateHandle
-) : ViewModel(), PostsAdapter.OnItemClickedListener {
+    private val savedStateHandle: SavedStateHandle,
+    private val sendNotificationUseCase: SendNotificationUseCase
+) : AndroidViewModel(application), PostsAdapter.OnItemClickedListener {
 
     private val _postsList: MutableStateFlow<List<Post>> = MutableStateFlow(listOf())
     val postsList: StateFlow<List<Post>> = _postsList
@@ -31,11 +39,22 @@ class HomeViewModel @Inject constructor(
 
     private val _userInfo = MutableStateFlow(UserFirebase())
     val userInfo: StateFlow<UserFirebase> = _userInfo
+    var accessToken = ""
+    var pushToken = ""
 
 
     init {
         getAllPostsFromFirebase()
         getUserInfo()
+       // getToken()
+
+
+    }
+
+    fun setPushTokenFirst(token: String) {
+        pushToken = token
+        println("PUSH $pushToken")
+        sendNotificationUseCase.invoke(pushToken)
     }
 
     private fun getUserInfo() {
@@ -87,5 +106,29 @@ class HomeViewModel @Inject constructor(
     override fun onItemClicked(position: Int, post: Post) {
         _actionState.value = ActionState.NavigateTDetailLandmark(post)
         _actionState.value = null
+    }
+
+
+    private fun getToken() {
+        object : Thread() {
+            override fun run() {
+                try {
+                    val appId: String =
+                        AGConnectServicesConfig.fromContext(getApplication())
+                            .getString("client/app_id")
+                    pushToken = HmsInstanceId.getInstance(getApplication()).getToken(appId, "HCM")
+
+                    if (!TextUtils.isEmpty(pushToken)) {
+                        Log.i("PushActivity", "get token: $pushToken")
+                        setPushTokenFirst("$pushToken")
+                    }
+                } catch (e: Exception) {
+                    Log.i("PushActivity", "getToken failed, $e")
+                }
+
+            }
+        }.start()
+
+
     }
 }

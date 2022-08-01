@@ -2,12 +2,12 @@ package com.canbazdev.hmskitsproject1.di
 
 import android.app.Application
 import android.content.Context
-import com.canbazdev.hmskitsproject1.data.repository.LocationRepositoryImpl
-import com.canbazdev.hmskitsproject1.data.repository.LoginRepositoryImpl
-import com.canbazdev.hmskitsproject1.data.repository.PostsRepositoryImpl
-import com.canbazdev.hmskitsproject1.data.repository.RemoteDataSourceImpl
+import com.canbazdev.hmskitsproject1.data.repository.*
+import com.canbazdev.hmskitsproject1.data.source.remote.AccessTokenService
+import com.canbazdev.hmskitsproject1.data.source.remote.LandmarkService
 import com.canbazdev.hmskitsproject1.domain.repository.LocationRepository
 import com.canbazdev.hmskitsproject1.domain.repository.LoginRepository
+import com.canbazdev.hmskitsproject1.domain.repository.NotificationRepository
 import com.canbazdev.hmskitsproject1.domain.repository.PostsRepository
 import com.canbazdev.hmskitsproject1.domain.source.RemoteDataSource
 import com.google.firebase.firestore.CollectionReference
@@ -57,7 +57,7 @@ object RepositoryModule {
         postsRef: CollectionReference,
         db: FirebaseFirestore,
         @ApplicationContext context: Context,
-        application: Application,
+        application: Application
     ): RemoteDataSource {
         return RemoteDataSourceImpl(
             providePostsRepository(postsRef),
@@ -80,5 +80,13 @@ object RepositoryModule {
         db: FirebaseFirestore
     ): LoginRepository =
         LoginRepositoryImpl(context, db)
+
+    @Provides
+    fun provideNotificationRepository(
+        landmarkService: LandmarkService,
+        accessTokenService: AccessTokenService
+    ): NotificationRepository {
+        return NotificationRepositoryImpl(landmarkService, accessTokenService)
+    }
 
 }

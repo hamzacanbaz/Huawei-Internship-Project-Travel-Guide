@@ -7,5 +7,6 @@ object Constants  {
     const val TAG = "HMSKITS"
     const val CloudDbZoneName = "HmsKitsApp"
     const val ID = "id"
+    const val BASE_URL = "https://push-api.cloud.huawei.com/"
 
 }

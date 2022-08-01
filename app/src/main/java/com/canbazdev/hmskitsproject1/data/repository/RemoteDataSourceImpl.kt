@@ -134,6 +134,17 @@ class RemoteDataSourceImpl @Inject constructor(
         }
     }
 
+    override suspend fun getPostsByUserId(userId: String): List<Post> {
+        return suspendCoroutine { continuation ->
+            postsRepository.getPostsByUserId(userId).addOnSuccessListener {
+                continuation.resumeWith(Result.success(it))
+            }.addOnFailureListener {
+                continuation.resumeWithException(it)
+            }
+        }
+    }
+
+
     override suspend fun checkLocationOptions(): LocationSettingsResponse {
         return suspendCoroutine { continuation ->
             locationRepository.getLocationOptions()

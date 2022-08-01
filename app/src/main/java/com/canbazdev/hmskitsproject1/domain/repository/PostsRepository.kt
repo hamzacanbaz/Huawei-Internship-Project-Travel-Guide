@@ -11,5 +11,6 @@ interface PostsRepository {
     fun addPostToFirestore(post: Post): Work<Post>
     fun uploadPostImageToStorage(uri: Uri): Work<Uri>
     fun getAllPostsFromFirebase(): Work<List<Post>>
+    fun getPostsByUserId(userId: String): Work<List<Post>>
 
 }

@@ -65,7 +65,40 @@ class PostsRepositoryImpl @Inject constructor(
                 }
                 work.onSuccess(postsList)
             }
+        }.addOnFailureListener { work.onFailure(it) }
+        return work
+    }
+
+    override fun getPostsByUserId(userId: String): Work<List<Post>> {
+        val work = Work<List<Post>>()
+        postsRef.get().addOnSuccessListener {
+            if (!it.isEmpty) {
+                val documents = it.documents
+                val postsList = ArrayList<Post>()
+                documents.forEach { d ->
+                    if (d.data?.get("authorId")?.equals(userId) == true) {
+                        postsList.add(
+                            Post(
+                                landmarkImage = d.data?.get("landmarkImage") as String,
+                                landmarkInfo = d.data?.get("landmarkInfo") as String,
+                                landmarkLocation = d.data?.get("landmarkLocation") as String,
+                                landmarkLatitude = d.data?.get("landmarkLatitude") as Double,
+                                landmarkLongitude = d.data?.get("landmarkLongitude") as Double,
+                                landmarkName = d.data?.get("landmarkName") as String,
+                                authorId = d.data?.get("authorId") as String
+                            )
+                        )
+
+                    }
+                    println(d.data?.get("landmarkImage"))
+                }
+                work.onSuccess(postsList)
+            }
+
         }
+            .addOnFailureListener {
+                work.onFailure(it)
+            }
         return work
     }
 

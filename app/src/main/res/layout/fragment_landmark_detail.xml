@@ -104,16 +104,18 @@
                 app:layout_constraintGuide_percent="0.9" />
 
             <ImageView
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginTop="24dp"
+                android:id="@+id/ivLandmarkImage"
                 android:layout_width="0dp"
-                android:layout_height="0dp"
+                android:layout_height="300dp"
                 android:loadImageWithRadius="@{viewmodel.landmark.landmarkImage}"
-                app:layout_constraintBottom_toBottomOf="@id/h0_4"
                 app:layout_constraintEnd_toEndOf="@id/v0_9"
                 app:layout_constraintStart_toStartOf="@id/v0_1"
-                app:layout_constraintTop_toTopOf="@id/h0_1"
                 tools:src="@drawable/louvre" />
 
             <TextView
+                android:layout_marginTop="24dp"
                 android:id="@+id/tvName"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -121,10 +123,11 @@
                 android:textSize="18sp"
                 app:layout_constraintEnd_toEndOf="@id/v0_9"
                 app:layout_constraintStart_toStartOf="@id/v0_1"
-                app:layout_constraintTop_toBottomOf="@id/h0_48"
+                app:layout_constraintTop_toBottomOf="@id/ivLandmarkImage"
                 tools:text="Landmark Name" />
 
             <TextView
+                android:layout_marginTop="36dp"
                 android:id="@+id/tvInfo"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -144,6 +147,7 @@
                 app:layout_constraintEnd_toEndOf="@id/v0_9"
                 app:layout_constraintStart_toStartOf="@id/v0_1"
                 app:layout_constraintTop_toBottomOf="@id/tvInfo"
+                android:layout_marginTop="24dp"
                 tools:text="Landmark Location" />
 
             <TextView
@@ -152,12 +156,16 @@
                 android:layout_height="wrap_content"
                 android:text="Su anlik bos gelmesi lazim"
                 android:textSize="18sp"
+                android:layout_marginTop="24dp"
                 app:layout_constraintEnd_toEndOf="@id/v0_9"
                 app:layout_constraintStart_toStartOf="@id/v0_1"
                 app:layout_constraintTop_toBottomOf="@id/tvLocation"
                 tools:text="Landmark Author" />
 
             <Button
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="24dp"
                 android:id="@+id/btnAddWishList"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"

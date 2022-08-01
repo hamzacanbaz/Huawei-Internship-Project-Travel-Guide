@@ -24,6 +24,7 @@ import com.huawei.hms.support.account.service.AccountAuthService
     suspend fun getAllPostsFromFirebase(): List<Post>
     suspend fun getNearbySites(lat: Double, lng: Double): List<Site>
     suspend fun insertUserToFirebase(userFirebase: UserFirebase): UserFirebase
+    suspend fun getPostsByUserId(userId: String): List<Post>
 
 
 }

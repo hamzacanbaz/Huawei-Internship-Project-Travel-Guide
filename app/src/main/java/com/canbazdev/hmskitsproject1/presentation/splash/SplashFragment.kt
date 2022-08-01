@@ -42,7 +42,7 @@ class SplashFragment : Fragment() {
             viewModel.isUserSignedIn.collect {
                 println("sgined in $it")
                 if (it)
-                    navigateToHomeFragment()
+                    findNavController().navigate(R.id.action_splashFragment_to_homeFragment)
 
             }
         }
@@ -52,7 +52,7 @@ class SplashFragment : Fragment() {
             viewModel.signedEnable.collect {
                 if (it == false) {
                     if (viewModel.currentUser != null) {
-                        navigateToHomeFragment()
+                        findNavController().navigate(R.id.action_splashFragment_to_homeFragment)
                     } else {
                         navigateToRegisterFragment()
                     }

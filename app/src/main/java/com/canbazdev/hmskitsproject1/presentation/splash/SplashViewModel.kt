@@ -2,7 +2,6 @@ package com.canbazdev.hmskitsproject1.presentation.splash
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.canbazdev.hmskitsproject1.data.repository.DataStoreRepository
 import com.canbazdev.hmskitsproject1.domain.usecase.login.CheckUserLoginUseCase
 import com.canbazdev.hmskitsproject1.domain.usecase.login.GetEnabledSilentSignInUseCase
 import com.canbazdev.hmskitsproject1.domain.usecase.login.SetEnabledSilentSignInUseCase
@@ -10,7 +9,6 @@ import com.canbazdev.hmskitsproject1.domain.usecase.login.SignInWithHuaweiIdUseC
 import com.canbazdev.hmskitsproject1.util.Resource
 import com.canbazdev.hmskitsproject1.util.SilentSignInStatus
 import com.huawei.agconnect.auth.AGConnectAuth
-import com.huawei.agconnect.auth.AGConnectAuthCredential
 import com.huawei.agconnect.auth.AGConnectUser
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -52,7 +50,7 @@ class SplashViewModel @Inject constructor(
         }
     }*/
 
-    fun checkEnable(){
+    fun checkEnable() {
         viewModelScope.launch {
             getEnabledSilentSignInUseCase.invoke().collect {
                 println("aaaaa")

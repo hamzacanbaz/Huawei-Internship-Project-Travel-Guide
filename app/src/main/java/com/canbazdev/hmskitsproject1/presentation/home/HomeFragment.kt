@@ -1,16 +1,21 @@
 package com.canbazdev.hmskitsproject1.presentation.home
 
 import android.os.Bundle
+import android.text.TextUtils
+import android.util.Log
 import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.canbazdev.hmskitsproject1.R
+import com.canbazdev.hmskitsproject1.data.source.remote.AccessTokenService
 import com.canbazdev.hmskitsproject1.databinding.FragmentHomeBinding
 import com.canbazdev.hmskitsproject1.domain.model.landmark.Post
 import com.canbazdev.hmskitsproject1.presentation.base.BaseFragment
 import com.canbazdev.hmskitsproject1.util.ActionState
 import com.huawei.agconnect.auth.AGConnectAuth
+import com.huawei.agconnect.config.AGConnectServicesConfig
+import com.huawei.hms.aaid.HmsInstanceId
 import com.huawei.hms.support.account.request.AccountAuthParams
 import com.huawei.hms.support.account.service.AccountAuthService
 import dagger.hilt.android.AndroidEntryPoint
@@ -24,8 +29,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     private lateinit var mAuthParam: AccountAuthParams
     private lateinit var mAuthService: AccountAuthService
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
 
         postsAdapter = PostsAdapter(viewModel)
         /*  postsAdapter.setPostsList(
@@ -88,6 +93,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
              println("error")
          }
      }*/
+
+
 
     private fun goToLandmarkDetail(post: Post) {
         val bundle = Bundle()

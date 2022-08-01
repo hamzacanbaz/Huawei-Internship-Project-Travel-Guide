@@ -7,18 +7,22 @@ import android.graphics.ImageDecoder
 import android.location.Geocoder
 import android.net.Uri
 import android.text.Editable
+import android.text.TextUtils
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.canbazdev.hmskitsproject1.domain.model.landmark.Post
 import com.canbazdev.hmskitsproject1.domain.usecase.location.CheckLocationOptionsUseCase
 import com.canbazdev.hmskitsproject1.domain.usecase.location.RecognizeLandmarkUseCase
+import com.canbazdev.hmskitsproject1.domain.usecase.notification.SendNotificationUseCase
 import com.canbazdev.hmskitsproject1.domain.usecase.posts.InsertPostImageToStorageUseCase
 import com.canbazdev.hmskitsproject1.domain.usecase.posts.InsertPostUseCase
 import com.canbazdev.hmskitsproject1.util.ActionState
 import com.canbazdev.hmskitsproject1.util.Constants
 import com.canbazdev.hmskitsproject1.util.Resource
 import com.huawei.agconnect.auth.AGConnectAuth
+import com.huawei.agconnect.config.AGConnectServicesConfig
+import com.huawei.hms.aaid.HmsInstanceId
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -38,7 +42,9 @@ class PostViewModel @Inject constructor(
     private val insertPostUseCase: InsertPostUseCase,
     private val checkLocationOptionsUseCase: CheckLocationOptionsUseCase,
     private val recognizeLandmarkUseCase: RecognizeLandmarkUseCase,
-    private val insertPostImageToStorageUseCase: InsertPostImageToStorageUseCase
+    private val insertPostImageToStorageUseCase: InsertPostImageToStorageUseCase,
+    private val sendNotificationUseCase: SendNotificationUseCase
+
 ) : AndroidViewModel(application) {
 
 
@@ -63,6 +69,7 @@ class PostViewModel @Inject constructor(
     private val _recognizeState = MutableStateFlow(-1)
     val recognizeState: StateFlow<Int> = _recognizeState
 
+    var pushToken = ""
 
     init {
         checkLocationOptions()
@@ -89,6 +96,8 @@ class PostViewModel @Inject constructor(
         _isImageUploaded.value = true
     }
 
+    // repository'den author id ve author name al bunları ekle
+
     private fun sharePost(downloadUrl: String) {
         viewModelScope.launch {
             val post = this@PostViewModel.post.value.copy(
@@ -107,6 +116,7 @@ class PostViewModel @Inject constructor(
                     }
                     is Resource.Success -> {
                         println("vm successsss" + it.data)
+                        getToken()
                         _uiState.value = 1
                         _actionState.value = ActionState.NavigateToHome
 
@@ -218,6 +228,36 @@ class PostViewModel @Inject constructor(
         }
 
     }
+
+    fun setPushTokenFirst(token: String) {
+        pushToken = token
+        println("PUSH $pushToken")
+        sendNotificationUseCase.invoke(pushToken)
+    }
+
+    private fun getToken() {
+        object : Thread() {
+            override fun run() {
+                try {
+                    val appId: String =
+                        AGConnectServicesConfig.fromContext(getApplication())
+                            .getString("client/app_id")
+                    pushToken = HmsInstanceId.getInstance(getApplication()).getToken(appId, "HCM")
+
+                    if (!TextUtils.isEmpty(pushToken)) {
+                        Log.i("PushActivity", "get token: $pushToken")
+                        setPushTokenFirst("$pushToken")
+                    }
+                } catch (e: Exception) {
+                    Log.i("PushActivity", "getToken failed, $e")
+                }
+
+            }
+        }.start()
+
+
+    }
+
 
     /* fun imageToText(imageUri: Uri) {
      val bitmap = convertUriToBitmap(imageUri)
