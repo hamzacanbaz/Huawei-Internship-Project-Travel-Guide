@@ -10,7 +10,9 @@ import com.canbazdev.hmskitsproject1.util.Work
 interface PostsRepository {
     fun addPostToFirestore(post: Post): Work<Post>
     fun uploadPostImageToStorage(uri: Uri): Work<Uri>
+    fun uploadLandmarkQrCodeToStorage(uri: Uri, pathId: String): Work<Uri>
     fun getAllPostsFromFirebase(): Work<List<Post>>
     fun getPostsByUserId(userId: String): Work<List<Post>>
+    fun getLandmarkWithId(id: String): Work<Post>
 
 }

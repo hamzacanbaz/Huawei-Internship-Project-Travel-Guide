@@ -42,7 +42,7 @@ class PostsAdapter(
         override fun onClick(p0: View?) {
             val position = layoutPosition
             if (position != RecyclerView.NO_POSITION) {
-                postsList.get(position)?.let { listener?.onItemClicked(position, it) }
+                postsList[position].let { listener?.onItemClicked(position, it) }
             }
         }
 

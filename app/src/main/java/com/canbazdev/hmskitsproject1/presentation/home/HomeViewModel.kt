@@ -12,13 +12,13 @@ import com.canbazdev.hmskitsproject1.domain.model.login.UserFirebase
 import com.canbazdev.hmskitsproject1.domain.usecase.notification.SendNotificationUseCase
 import com.canbazdev.hmskitsproject1.domain.usecase.posts.GetAllPostsFromFirebaseUseCase
 import com.canbazdev.hmskitsproject1.util.ActionState
+import com.canbazdev.hmskitsproject1.util.Constants
 import com.canbazdev.hmskitsproject1.util.Resource
 import com.huawei.agconnect.config.AGConnectServicesConfig
 import com.huawei.hms.aaid.HmsInstanceId
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -46,7 +46,8 @@ class HomeViewModel @Inject constructor(
     init {
         getAllPostsFromFirebase()
         getUserInfo()
-       // getToken()
+        getLandmarkError()
+        // getToken()
 
 
     }
@@ -63,6 +64,13 @@ class HomeViewModel @Inject constructor(
             _userInfo.value = user
             updateCurrentUserInfo()
         }
+    }
+
+    private fun getLandmarkError(){
+        savedStateHandle.get<String>(Constants.LANDMARK_NO_FOUND)?.let { error ->
+            _actionState.value = ActionState.ShowToast(error)
+        }
+
     }
 
     private fun updateCurrentUserInfo() {
@@ -104,6 +112,7 @@ class HomeViewModel @Inject constructor(
     }
 
     override fun onItemClicked(position: Int, post: Post) {
+        println(post)
         _actionState.value = ActionState.NavigateTDetailLandmark(post)
         _actionState.value = null
     }

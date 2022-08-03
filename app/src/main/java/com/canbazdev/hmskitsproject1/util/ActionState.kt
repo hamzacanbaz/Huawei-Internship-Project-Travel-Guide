@@ -9,4 +9,5 @@ sealed class ActionState {
     object NavigateToHome : ActionState()
     object NavigateToRegister : ActionState()
     data class NavigateTDetailLandmark(val post: Post) : ActionState()
+    data class ShowToast(val message:String) : ActionState()
 }

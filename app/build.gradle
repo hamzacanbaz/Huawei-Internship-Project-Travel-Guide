@@ -231,6 +231,17 @@ dependencies {
     // Image Loading
     implementation "com.github.skydoves:landscapist-glide:1.6.0"
 
+    // FlowRow
+    implementation "com.google.accompanist:accompanist-flowlayout:0.26.0-alpha"
+
+    // Ads Kit
+    implementation 'com.huawei.hms:ads-prime:3.4.54.300'
+    implementation 'com.huawei.hms:ads-omsdk:1.3.0'
+
+    // Scan Kit
+    implementation 'com.huawei.hms:scan:2.6.0.300'
+
+
 
 
 }

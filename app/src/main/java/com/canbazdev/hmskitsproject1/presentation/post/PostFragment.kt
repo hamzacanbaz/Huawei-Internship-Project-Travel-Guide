@@ -19,7 +19,6 @@ import com.canbazdev.hmskitsproject1.util.PermissionUtils
 import com.canbazdev.hmskitsproject1.util.Resource
 import com.github.dhaval2404.imagepicker.ImagePicker
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
 
@@ -54,8 +53,18 @@ class PostFragment : BaseFragment<FragmentPostBinding>(R.layout.fragment_post),
         }
 
         lifecycleScope.launchWhenCreated {
-            val dialog = LoadingDialog(context!!, "Recognizing")
+            val dialog = LoadingDialog(context!!, "Landmark Recognizing")
             viewModel.recognizeState.collect {
+                when (it) {
+                    0 -> dialog.startLoadingDialog()
+                    1 -> dialog.dismissDialog()
+                }
+            }
+        }
+
+        lifecycleScope.launchWhenCreated {
+            val dialog = LoadingDialog(context!!, "Landmark Uploading")
+            viewModel.uploadState.collect {
                 when (it) {
                     0 -> dialog.startLoadingDialog()
                     1 -> dialog.dismissDialog()

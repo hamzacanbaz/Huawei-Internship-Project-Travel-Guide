@@ -1,10 +1,12 @@
 package com.canbazdev.hmskitsproject1.presentation
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.navigation.NavController
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -13,10 +15,10 @@ import com.canbazdev.hmskitsproject1.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.huawei.agconnect.AGConnectInstance
 import com.huawei.agconnect.api.AGConnectApi
+import com.huawei.hms.hmsscankit.ScanUtil
 import com.huawei.hms.maps.HuaweiMap
-import com.huawei.hms.maps.MapsInitializer
 import com.huawei.hms.maps.OnMapReadyCallback
-import com.huawei.hms.maps.SupportMapFragment
+import com.huawei.hms.ml.scan.HmsScan
 import com.huawei.hms.site.api.SearchService
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -44,9 +46,30 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         AGConnectApi.getInstance().activityLifecycle().onCreate(this)
 
 
-
-
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode != RESULT_OK || data == null) {
+            return
+        }
+        if (requestCode == 120) {
+            // Input an image for scanning and return the result.
+            var obj = data.getParcelableExtra(ScanUtil.RESULT) as HmsScan?
+            if (obj != null) {
+                // TODO BARKODA ID EKLE DETAIL'E ID GONDER ORADA FIREBASE'DEN CEKME ISLEMI YAP
+                println("OBJ ${obj.showResult}")
+                val bundle = Bundle()
+                bundle.putString("scanUuid", obj.showResult)
+                findNavController(R.id.nav_host_fragment).navigate(
+                    R.id.action_global_landmarkDetailFragment,
+                    bundle
+                )
+
+            }
+        }
+    }
+
 
     private fun setUpBottomNavigationView(
         navController: NavController,

@@ -44,6 +44,22 @@ class PostsRepositoryImpl @Inject constructor(
         return work
     }
 
+    override fun uploadLandmarkQrCodeToStorage(uri: Uri, pathId: String): Work<Uri> {
+        val work = Work<Uri>()
+        val storage = FirebaseStorage.getInstance()
+        val location = "qrCodes/$pathId"
+        storage.getReference(location)
+            .putFile(uri)
+            .addOnSuccessListener {
+                storage.getReference(location).downloadUrl.addOnSuccessListener {
+                    work.onSuccess(it)
+                }
+            }.addOnFailureListener { e ->
+                work.onFailure(e)
+            }
+        return work
+    }
+
     override fun getAllPostsFromFirebase(): Work<List<Post>> {
         val work = Work<List<Post>>()
         postsRef.get().addOnSuccessListener {
@@ -53,12 +69,19 @@ class PostsRepositoryImpl @Inject constructor(
                 documents.forEach { d ->
                     postsList.add(
                         Post(
-                            landmarkImage = d.data?.get("landmarkImage") as String,
-                            landmarkInfo = d.data?.get("landmarkInfo") as String,
-                            landmarkLocation = d.data?.get("landmarkLocation") as String,
-                            landmarkLatitude = d.data?.get("landmarkLatitude") as Double,
-                            landmarkLongitude = d.data?.get("landmarkLongitude") as Double,
-                            landmarkName = d.data?.get("landmarkName") as String,
+                            landmarkImage = d.data?.get("landmarkImage")?.let { p -> p as String },
+                            landmarkInfo = d.data?.get("landmarkInfo")?.let { p -> p as String },
+                            landmarkLocation = d.data?.get("landmarkLocation")
+                                ?.let { p -> p as String },
+                            landmarkLatitude = d.data?.get("landmarkLatitude")
+                                ?.let { p -> p as Double },
+                            landmarkLongitude = d.data?.get("landmarkLongitude")
+                                ?.let { p -> p as Double },
+                            landmarkName = d.data?.get("landmarkName")?.let { p -> p as String },
+                            authorId = d.data?.get("authorId")?.let { p -> p as String },
+                            id = d.data?.get("id")?.let { p -> p as String },
+                            qrUrl = d.data?.get("qrUrl")?.let { qr -> qr as String }
+
                         )
                     )
                     println(d.data?.get("landmarkImage"))
@@ -79,13 +102,22 @@ class PostsRepositoryImpl @Inject constructor(
                     if (d.data?.get("authorId")?.equals(userId) == true) {
                         postsList.add(
                             Post(
-                                landmarkImage = d.data?.get("landmarkImage") as String,
-                                landmarkInfo = d.data?.get("landmarkInfo") as String,
-                                landmarkLocation = d.data?.get("landmarkLocation") as String,
-                                landmarkLatitude = d.data?.get("landmarkLatitude") as Double,
-                                landmarkLongitude = d.data?.get("landmarkLongitude") as Double,
-                                landmarkName = d.data?.get("landmarkName") as String,
-                                authorId = d.data?.get("authorId") as String
+                                landmarkImage = d.data?.get("landmarkImage")
+                                    ?.let { p -> p as String },
+                                landmarkInfo = d.data?.get("landmarkInfo")
+                                    ?.let { p -> p as String },
+                                landmarkLocation = d.data?.get("landmarkLocation")
+                                    ?.let { p -> p as String },
+                                landmarkLatitude = d.data?.get("landmarkLatitude")
+                                    ?.let { p -> p as Double },
+                                landmarkLongitude = d.data?.get("landmarkLongitude")
+                                    ?.let { p -> p as Double },
+                                landmarkName = d.data?.get("landmarkName")
+                                    ?.let { p -> p as String },
+                                authorId = d.data?.get("authorId")?.let { p -> p as String },
+                                id = d.data?.get("id")?.let { p -> p as String },
+                                qrUrl = d.data?.get("qrUrl")?.let { qr -> qr as String }
+
                             )
                         )
 
@@ -93,6 +125,40 @@ class PostsRepositoryImpl @Inject constructor(
                     println(d.data?.get("landmarkImage"))
                 }
                 work.onSuccess(postsList)
+            }
+
+        }
+            .addOnFailureListener {
+                work.onFailure(it)
+            }
+        return work
+    }
+
+    override fun getLandmarkWithId(id: String): Work<Post> {
+        val work = Work<Post>()
+        postsRef.get().addOnSuccessListener {
+            if (!it.isEmpty) {
+                val documents = it.documents
+                var post = Post()
+                documents.forEach { d ->
+                    if (d.data?.get("id")?.equals(id) == true) {
+                        post = Post(
+                            landmarkImage = d.data?.get("landmarkImage")?.let { p -> p as String },
+                            landmarkInfo = d.data?.get("landmarkInfo")?.let { p -> p as String },
+                            landmarkLocation = d.data?.get("landmarkLocation")
+                                ?.let { p -> p as String },
+                            landmarkLatitude = d.data?.get("landmarkLatitude")
+                                ?.let { p -> p as Double },
+                            landmarkLongitude = d.data?.get("landmarkLongitude")
+                                ?.let { p -> p as Double },
+                            landmarkName = d.data?.get("landmarkName")?.let { p -> p as String },
+                            authorId = d.data?.get("authorId")?.let { p -> p as String },
+                            id = d.data?.get("id")?.let { p -> p as String },
+                            qrUrl = d.data?.get("qrUrl")?.let { qr -> qr as String }
+                        )
+                    }
+                }
+                work.onSuccess(post)
             }
 
         }

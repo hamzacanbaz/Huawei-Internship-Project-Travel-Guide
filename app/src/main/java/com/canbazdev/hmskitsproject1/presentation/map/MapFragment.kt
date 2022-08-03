@@ -3,7 +3,11 @@ package com.canbazdev.hmskitsproject1.presentation.map
 import android.os.Bundle
 import android.os.Looper
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.widget.ImageView
+import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.canbazdev.hmskitsproject1.R
@@ -11,12 +15,8 @@ import com.canbazdev.hmskitsproject1.databinding.FragmentMapBinding
 import com.canbazdev.hmskitsproject1.presentation.base.BaseFragment
 import com.huawei.hms.location.*
 import com.huawei.hms.maps.*
-import com.huawei.hms.maps.model.BitmapDescriptorFactory
-import com.huawei.hms.maps.model.CameraPosition
-import com.huawei.hms.maps.model.LatLng
-import com.huawei.hms.maps.model.MarkerOptions
+import com.huawei.hms.maps.model.*
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 
 @AndroidEntryPoint
 class MapFragment : BaseFragment<FragmentMapBinding>(R.layout.fragment_map), OnMapReadyCallback {
@@ -34,11 +34,12 @@ class MapFragment : BaseFragment<FragmentMapBinding>(R.layout.fragment_map), OnM
         super.onViewCreated(view, savedInstanceState)
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context)
-        val mLocationRequest = LocationRequest()
-        mLocationRequest.apply {
+
+        val mLocationRequest = LocationRequest().apply {
             this.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
             this.numUpdates = 1
         }
+
         initializeLocationCallback()
         getLocation(mLocationRequest, mLocationCallback)
 
@@ -69,23 +70,24 @@ class MapFragment : BaseFragment<FragmentMapBinding>(R.layout.fragment_map), OnM
         addMarkersToLandmarks()
         hMap?.uiSettings?.isMyLocationButtonEnabled
         updateCamera()
+        listenMarkers()
 
     }
 
     private fun addMarkersToLandmarks() {
         lifecycleScope.launchWhenCreated {
-            viewmodel.postsList.collect {
-                it.forEach { landmark ->
+            viewmodel.postsList.collect { postList ->
+                postList.forEach { landmark ->
                     hMap?.addMarker(
                         MarkerOptions()
                             .icon(BitmapDescriptorFactory.defaultMarker())
                             .title(landmark.landmarkName)
                             .position(
-                                landmark.landmarkLongitude?.let { it1 ->
-                                    landmark.landmarkLatitude?.let { it2 ->
+                                landmark.landmarkLongitude?.let { lng ->
+                                    landmark.landmarkLatitude?.let { ltd ->
                                         LatLng(
-                                            it2,
-                                            it1
+                                            ltd,
+                                            lng
                                         )
                                     }
                                 }
@@ -94,6 +96,55 @@ class MapFragment : BaseFragment<FragmentMapBinding>(R.layout.fragment_map), OnM
                     )
                 }
             }
+        }
+
+        lifecycleScope.launchWhenCreated {
+            viewmodel.nearbyLandmarkList.collect { landmarkList ->
+                landmarkList.forEach { landmark ->
+
+                    hMap?.addMarker(
+                        MarkerOptions()
+                            .icon(
+                                BitmapDescriptorFactory.fromResource(R.drawable.ic_baseline_food_bank_24)
+                            )
+                            .title(landmark.name)
+                            .position(
+                                LatLng(landmark.latitude, landmark.longitude)
+                            )
+                    )
+
+                }
+
+            }
+        }
+    }
+
+    private fun listenMarkers() {
+        hMap?.setOnMarkerClickListener { marker ->
+            println("marker clicked")
+            Toast.makeText(context, marker.title, Toast.LENGTH_SHORT).show()
+
+            setupDialog(marker)
+
+            false
+        }
+    }
+
+    private fun setupDialog(marker: Marker) {
+        val view = LayoutInflater.from(context).inflate(R.layout.dialog_ask, null)
+        view.findViewById<TextView>(R.id.tvTitle).text = marker.title
+        val builder = android.app.AlertDialog.Builder(context)
+            .setView(view)
+
+        val dialog = builder.create()
+        dialog.show()
+        view.findViewById<ImageView>(R.id.ivShowNearby).setOnClickListener {
+            viewmodel.setNearbyLocationTitle(marker.position)
+            dialog.dismiss()
+        }
+        view.findViewById<ImageView>(R.id.ivGoToMap).setOnClickListener {
+            Toast.makeText(context, "GO TO MAP", Toast.LENGTH_SHORT).show()
+            dialog.dismiss()
         }
     }
 

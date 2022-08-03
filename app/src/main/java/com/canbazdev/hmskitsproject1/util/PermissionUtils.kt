@@ -10,7 +10,10 @@ object PermissionUtils {
 
     const val ACCESS_FINE_LOCATION = android.Manifest.permission.ACCESS_FINE_LOCATION
     const val ACCESS_COARSE_LOCATION = android.Manifest.permission.ACCESS_COARSE_LOCATION
+    const val CAMERA = android.Manifest.permission.CAMERA
+    const val READ_EXTERNAL_STORAGE = android.Manifest.permission.READ_EXTERNAL_STORAGE
     const val LOCATION_REQUEST_CODE = 100
+    const val SCAN_REQUEST_CODE = 110
 
 
     fun hasLocationPermissions(context: Context) =
@@ -18,6 +21,13 @@ object PermissionUtils {
             context,
             ACCESS_FINE_LOCATION,
             ACCESS_COARSE_LOCATION
+        )
+
+    fun hasScanPermissions(context: Context) =
+        EasyPermissions.hasPermissions(
+            context,
+            CAMERA,
+            READ_EXTERNAL_STORAGE
         )
 
 

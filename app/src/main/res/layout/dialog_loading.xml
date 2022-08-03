@@ -5,37 +5,36 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="center_horizontal"
-    android:background="@drawable/btn_bg"
-    android:paddingStart="50dp"
+    android:background="@drawable/bg_no_color"
     android:paddingTop="24dp"
-    android:paddingEnd="50dp">
+    >
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline0_1"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.5" />
 
     <ProgressBar
-
         android:id="@+id/pbLoading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
-        app:layout_constraintBottom_toTopOf="@id/guideline0_1"
+        android:layout_marginBottom="66dp"
+        android:indeterminate="true"
+        android:indeterminateTint="@color/primary"
+        android:indeterminateTintMode="src_atop"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
+        android:layout_marginTop="12dp"
+        android:gravity="center"
         android:id="@+id/tvInfo"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/white"
+        android:layout_marginBottom="20dp"
         android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/guideline0_1"
+        app:layout_constraintTop_toBottomOf="@id/pbLoading"
         tools:text="Image is Processing" />
 </androidx.constraintlayout.widget.ConstraintLayout>

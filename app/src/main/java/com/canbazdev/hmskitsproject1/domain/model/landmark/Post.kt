@@ -13,5 +13,6 @@ data class Post(
     var landmarkImage: String? = null,
     var landmarkLatitude: Double? = null,
     var landmarkLongitude: Double? = null,
-    var authorId: String? = null
+    var authorId: String? = null,
+    var qrUrl: String? = null
 ) : Serializable

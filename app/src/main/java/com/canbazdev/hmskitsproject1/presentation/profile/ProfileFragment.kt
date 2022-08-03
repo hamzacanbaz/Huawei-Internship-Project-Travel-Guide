@@ -8,8 +8,11 @@ import androidx.compose.material.MaterialTheme
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.canbazdev.hmskitsproject1.R
 import com.canbazdev.hmskitsproject1.databinding.FragmentProfileBinding
+import com.canbazdev.hmskitsproject1.util.ActionState
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -37,7 +40,21 @@ class ProfileFragment : Fragment() {
                 }
             }
         }
-    return binding.root
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        lifecycleScope.launchWhenCreated {
+            viewModel.actionState.collect {
+                when (it) {
+                    is ActionState.NavigateToRegister -> {
+                        findNavController().navigate(R.id.action_profileFragment_to_registerFragment)
+                    }
+                    else -> {}
+                }
+            }
+        }
+        super.onViewCreated(view, savedInstanceState)
     }
 
 

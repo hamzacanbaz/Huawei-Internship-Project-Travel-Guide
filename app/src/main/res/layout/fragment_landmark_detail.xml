@@ -104,77 +104,130 @@
                 app:layout_constraintGuide_percent="0.9" />
 
             <ImageView
-                app:layout_constraintTop_toTopOf="parent"
-                android:layout_marginTop="24dp"
                 android:id="@+id/ivLandmarkImage"
                 android:layout_width="0dp"
-                android:layout_height="300dp"
+                android:layout_height="200dp"
                 android:loadImageWithRadius="@{viewmodel.landmark.landmarkImage}"
-                app:layout_constraintEnd_toEndOf="@id/v0_9"
-                app:layout_constraintStart_toStartOf="@id/v0_1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 tools:src="@drawable/louvre" />
 
             <TextView
-                android:layout_marginTop="24dp"
                 android:id="@+id/tvName"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:text="@{viewmodel.landmark.landmarkName}"
-                android:textSize="18sp"
+                android:textColor="#272727"
+                android:textSize="20sp"
+                android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="@id/v0_9"
                 app:layout_constraintStart_toStartOf="@id/v0_1"
                 app:layout_constraintTop_toBottomOf="@id/ivLandmarkImage"
-                tools:text="Landmark Name" />
-
-            <TextView
-                android:layout_marginTop="36dp"
-                android:id="@+id/tvInfo"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="@{viewmodel.landmark.landmarkInfo}"
-                android:textSize="18sp"
-                app:layout_constraintEnd_toEndOf="@id/v0_9"
-                app:layout_constraintStart_toStartOf="@id/v0_1"
-                app:layout_constraintTop_toBottomOf="@id/tvName"
-                tools:text="In publishing and graphic design, Lorem ipsum is a placeholder textIn publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content.  commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. " />
+                tools:text="Eiffel Tower" />
 
             <TextView
                 android:id="@+id/tvLocation"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="@{viewmodel.landmark.landmarkLocation}"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="@id/v0_9"
+                app:layout_constraintStart_toStartOf="@id/v0_1"
+                app:layout_constraintTop_toBottomOf="@id/tvName"
+                tools:text="Paris, France" />
+
+            <TextView
+                android:id="@+id/tvInfoInfo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="Information"
+                android:textColor="#EC407A"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="@id/v0_9"
+                app:layout_constraintStart_toStartOf="@id/v0_1"
+                app:layout_constraintTop_toBottomOf="@id/tvLocation" />
+
+            <TextView
+                android:id="@+id/tvInfo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@{viewmodel.landmark.landmarkInfo}"
                 android:textSize="18sp"
                 app:layout_constraintEnd_toEndOf="@id/v0_9"
                 app:layout_constraintStart_toStartOf="@id/v0_1"
-                app:layout_constraintTop_toBottomOf="@id/tvInfo"
+                app:layout_constraintTop_toBottomOf="@id/tvInfoInfo"
+                tools:text="In publishing and graphic design, Lorem ipsum is a placeholder textIn publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content.  commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. " />
+
+            <TextView
+                android:id="@+id/tvAuthorInfo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                tools:text="Landmark Location" />
+                android:text="Author"
+                android:textColor="#EC407A"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="@id/v0_9"
+                app:layout_constraintStart_toStartOf="@id/v0_1"
+                app:layout_constraintTop_toBottomOf="@id/tvInfo" />
+
 
             <TextView
                 android:id="@+id/tvAuthor"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Su anlik bos gelmesi lazim"
+                android:layout_marginTop="4dp"
+                android:text="hamza168canbaz48"
                 android:textSize="18sp"
-                android:layout_marginTop="24dp"
                 app:layout_constraintEnd_toEndOf="@id/v0_9"
                 app:layout_constraintStart_toStartOf="@id/v0_1"
-                app:layout_constraintTop_toBottomOf="@id/tvLocation"
-                tools:text="Landmark Author" />
+                app:layout_constraintTop_toBottomOf="@id/tvAuthorInfo"
+                tools:text="hamza168canbaz48" />
 
             <Button
-                app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_marginTop="24dp"
-                android:layout_marginBottom="24dp"
                 android:id="@+id/btnAddWishList"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="24dp"
                 android:background="@drawable/btn_bg_detail"
+                android:maxHeight="40dp"
                 android:text="Add To List"
                 android:textColor="@color/white"
                 app:layout_constraintEnd_toEndOf="@id/v0_8"
                 app:layout_constraintStart_toStartOf="@id/v0_2"
                 app:layout_constraintTop_toBottomOf="@id/tvAuthor" />
+
+            <Button
+                android:id="@+id/btnOpenMap"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="24dp"
+                android:background="@drawable/btn_bg"
+                android:maxHeight="40dp"
+                android:text="Get Directions"
+                android:textColor="@color/white"
+                app:layout_constraintEnd_toEndOf="@id/v0_8"
+                app:layout_constraintStart_toStartOf="@id/v0_2"
+                app:layout_constraintTop_toBottomOf="@id/btnAddWishList" />
+
+            <TextView
+                android:id="@+id/tvShowQrCode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="24dp"
+                android:text="Show QR Code"
+                android:textColor="#EC407A"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@id/v0_8"
+                app:layout_constraintStart_toStartOf="@id/v0_2"
+                app:layout_constraintTop_toBottomOf="@id/btnOpenMap" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

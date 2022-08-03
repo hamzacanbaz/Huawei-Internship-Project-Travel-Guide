@@ -2,10 +2,12 @@ package com.canbazdev.hmskitsproject1.presentation.post
 
 import android.app.Application
 import android.content.ContentResolver
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.location.Geocoder
 import android.net.Uri
+import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextUtils
 import android.util.Log
@@ -15,6 +17,7 @@ import com.canbazdev.hmskitsproject1.domain.model.landmark.Post
 import com.canbazdev.hmskitsproject1.domain.usecase.location.CheckLocationOptionsUseCase
 import com.canbazdev.hmskitsproject1.domain.usecase.location.RecognizeLandmarkUseCase
 import com.canbazdev.hmskitsproject1.domain.usecase.notification.SendNotificationUseCase
+import com.canbazdev.hmskitsproject1.domain.usecase.posts.InsertLandmarkQrCodeToStorageUseCase
 import com.canbazdev.hmskitsproject1.domain.usecase.posts.InsertPostImageToStorageUseCase
 import com.canbazdev.hmskitsproject1.domain.usecase.posts.InsertPostUseCase
 import com.canbazdev.hmskitsproject1.util.ActionState
@@ -23,11 +26,14 @@ import com.canbazdev.hmskitsproject1.util.Resource
 import com.huawei.agconnect.auth.AGConnectAuth
 import com.huawei.agconnect.config.AGConnectServicesConfig
 import com.huawei.hms.aaid.HmsInstanceId
+import com.huawei.hms.hmsscankit.ScanUtil
+import com.huawei.hms.hmsscankit.WriterException
+import com.huawei.hms.ml.scan.HmsScan
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.util.*
 import javax.inject.Inject
@@ -43,7 +49,8 @@ class PostViewModel @Inject constructor(
     private val checkLocationOptionsUseCase: CheckLocationOptionsUseCase,
     private val recognizeLandmarkUseCase: RecognizeLandmarkUseCase,
     private val insertPostImageToStorageUseCase: InsertPostImageToStorageUseCase,
-    private val sendNotificationUseCase: SendNotificationUseCase
+    private val sendNotificationUseCase: SendNotificationUseCase,
+    private val insertLandmarkQrCodeToStorageUseCase: InsertLandmarkQrCodeToStorageUseCase
 
 ) : AndroidViewModel(application) {
 
@@ -69,7 +76,13 @@ class PostViewModel @Inject constructor(
     private val _recognizeState = MutableStateFlow(-1)
     val recognizeState: StateFlow<Int> = _recognizeState
 
+    private val _uploadState = MutableStateFlow(-1)
+    val uploadState: StateFlow<Int> = _uploadState
+
     var pushToken = ""
+
+    private val qrCode = MutableStateFlow<Uri>(Uri.EMPTY)
+    private val postId = UUID.randomUUID().toString()
 
     init {
         checkLocationOptions()
@@ -98,24 +111,27 @@ class PostViewModel @Inject constructor(
 
     // repository'den author id ve author name al bunları ekle
 
-    private fun sharePost(downloadUrl: String) {
+    private fun sharePost() {
         viewModelScope.launch {
             val post = this@PostViewModel.post.value.copy(
-                id = UUID.randomUUID().toString(),
-                landmarkImage = downloadUrl,
+                id = postId,
                 authorId = AGConnectAuth.getInstance().currentUser.uid
             )
-            insertPostUseCase.invoke(post).collect { it ->
+
+            insertPostUseCase.invoke(post).collect { result ->
                 println("vm collect")
-                when (it) {
+                when (result) {
                     is Resource.Loading -> {
+                        _uploadState.value = 0
                         println("vm Loading")
                     }
                     is Resource.Error -> {
-                        println("vm Error + ${it.errorMessage}")
+                        _uploadState.value = -2
+                        println("vm Error + ${result.errorMessage}")
                     }
                     is Resource.Success -> {
-                        println("vm successsss" + it.data)
+                        _uploadState.value = 1
+                        println("vm successsss" + result.data)
                         getToken()
                         _uiState.value = 1
                         _actionState.value = ActionState.NavigateToHome
@@ -129,13 +145,19 @@ class PostViewModel @Inject constructor(
 
     fun uploadPostImageBeforeShare() {
         viewModelScope.launch {
+            _uploadState.value = 0
+
             insertPostImageToStorageUseCase.invoke(postImage.value).collect {
                 when (it) {
                     is Resource.Success -> {
-                        sharePost(it.data.toString())
+                        println("post success")
+                        post.value.landmarkImage = it.data.toString()
+                        generateQrCode(postId)
+
                     }
                     is Resource.Error -> {
-                        sharePost("")
+                        println("post error")
+                        generateQrCode(postId)
                     }
                     else -> {}
                 }
@@ -256,6 +278,54 @@ class PostViewModel @Inject constructor(
         }.start()
 
 
+    }
+
+    private fun generateQrCode(content: String) {
+        println("generate qr code works")
+        val type = HmsScan.QRCODE_SCAN_TYPE
+        val width = 400
+        val height = 400
+        try {
+            // If the HmsBuildBitmapOption object is not constructed, set options to null.
+            val qrBitmap = ScanUtil.buildBitmap(content, type, width, height, null)
+            getImageUri(getApplication(), qrBitmap)
+
+        } catch (e: WriterException) {
+            Log.w("buildBitmap", e)
+        }
+
+    }
+
+    private fun getImageUri(inContext: Context, inImage: Bitmap) {
+        println("get Image Uri  works")
+        val bytes = ByteArrayOutputStream()
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
+        val path = MediaStore.Images.Media.insertImage(
+            inContext.contentResolver,
+            inImage,
+            "Title",
+            null
+        )
+        uploadLandmarkQrCodeToStorage(Uri.parse(path))
+    }
+
+    private fun uploadLandmarkQrCodeToStorage(uri: Uri) {
+        viewModelScope.launch {
+            println("upload qr code works")
+            insertLandmarkQrCodeToStorageUseCase.invoke(uri, postId)
+                .collect { result ->
+                    when (result) {
+                        is Resource.Loading -> println("qr loading")
+                        is Resource.Success -> {
+                            post.value.qrUrl = result.data.toString()
+                            println("qr success")
+                            sharePost()
+                        }
+                        is Resource.Error -> println("qr error ${result.errorMessage}")
+                    }
+                }
+
+        }
     }
 
 

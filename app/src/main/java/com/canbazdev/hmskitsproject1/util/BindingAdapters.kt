@@ -23,9 +23,15 @@ fun loadImage(view: ImageView, url: String?) {
     if (url != null) Glide.with(view.context).load(url).centerCrop().into(view)
 }
 
+@BindingAdapter("android:loadQrImage")
+fun loadQrImage(view: ImageView, url: String?) {
+    if (url != null) Glide.with(view.context).load(url).into(view)
+}
+
 @BindingAdapter("android:loadImageWithRadius")
 fun loadImageWithRadius(view: ImageView, url: String?) {
-    if (url != null) Glide.with(view.context).load(url).transform(RoundedCorners(20)).into(view)
+    if (url != null) Glide.with(view.context).load(url).transform(RoundedCorners(20)).centerCrop()
+        .into(view)
 }
 
 @BindingAdapter("android:setButtonEnabled")

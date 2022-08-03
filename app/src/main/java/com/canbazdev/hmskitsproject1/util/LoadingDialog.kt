@@ -26,3 +26,21 @@ class LoadingDialog(val context: Context, val message: String) {
     }
 
 }
+
+class ChooseDialog(val context: Context, val title: String) {
+    lateinit var dialog: AlertDialog
+    fun startDialog() {
+        val view = LayoutInflater.from(context).inflate(R.layout.dialog_ask, null);
+        val builder = AlertDialog.Builder(context)
+            .setView(view)
+            .setCancelable(false)
+
+        dialog = builder.create()
+        builder.setTitle(title)
+        dialog.show()
+    }
+
+    fun dismissDialog() {
+        dialog.dismiss()
+    }
+}

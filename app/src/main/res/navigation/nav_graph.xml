@@ -8,16 +8,16 @@
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.canbazdev.hmskitsproject1.presentation.home.HomeFragment"
-        android:label="fragment_home"
+        android:label="Home"
         tools:layout="@layout/fragment_home">
         <action
             android:id="@+id/action_homeFragment_to_postFragment"
             app:destination="@id/postFragment" />
         <action
-            app:popUpTo="@id/homeFragment"
-            app:popUpToInclusive="true"
             android:id="@+id/action_homeFragment_to_registerFragment"
-            app:destination="@id/registerFragment" />
+            app:destination="@id/registerFragment"
+            app:popUpTo="@id/homeFragment"
+            app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_homeFragment_to_landmarkDetailFragment"
             app:destination="@id/landmarkDetailFragment"
@@ -26,12 +26,12 @@
     <fragment
         android:id="@+id/mapFragment"
         android:name="com.canbazdev.hmskitsproject1.presentation.map.MapFragment"
-        android:label="fragment_map"
+        android:label="Map"
         tools:layout="@layout/fragment_map" />
     <fragment
         android:id="@+id/postFragment"
         android:name="com.canbazdev.hmskitsproject1.presentation.post.PostFragment"
-        android:label="fragment_post"
+        android:label="Share Landmark"
         tools:layout="@layout/fragment_post">
         <action
             android:id="@+id/action_postFragment_to_homeFragment"
@@ -42,8 +42,14 @@
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.canbazdev.hmskitsproject1.presentation.profile.ProfileFragment"
-        android:label="fragment_profile"
-        tools:layout="@layout/fragment_profile" />
+        android:label="Profile"
+        tools:layout="@layout/fragment_profile">
+        <action
+            android:id="@+id/action_profileFragment_to_registerFragment"
+            app:destination="@id/registerFragment"
+            app:popUpTo="@id/homeFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
     <fragment
         android:id="@+id/splashFragment"
         android:name="com.canbazdev.hmskitsproject1.presentation.splash.SplashFragment"
@@ -94,7 +100,7 @@
     <fragment
         android:id="@+id/landmarkDetailFragment"
         android:name="com.canbazdev.hmskitsproject1.presentation.detail_post.LandmarkDetailFragment"
-        android:label="fragment_landmark_detail"
+        android:label="Detail"
         tools:layout="@layout/fragment_landmark_detail">
         <action
             android:id="@+id/action_landmarkDetailFragment_to_homeFragment"
@@ -102,4 +108,7 @@
             app:popUpTo="@id/landmarkDetailFragment"
             app:popUpToInclusive="true" />
     </fragment>
+    <action
+        android:id="@+id/action_global_landmarkDetailFragment"
+        app:destination="@id/landmarkDetailFragment" />
 </navigation>

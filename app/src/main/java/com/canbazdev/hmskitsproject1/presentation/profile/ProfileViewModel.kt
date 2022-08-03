@@ -5,7 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.canbazdev.hmskitsproject1.data.repository.DataStoreRepository
 import com.canbazdev.hmskitsproject1.domain.model.landmark.Post
 import com.canbazdev.hmskitsproject1.domain.usecase.posts.GetPostsByUserIdUseCase
+import com.canbazdev.hmskitsproject1.util.ActionState
 import com.canbazdev.hmskitsproject1.util.Resource
+import com.huawei.agconnect.auth.AGConnectAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -28,6 +30,10 @@ class ProfileViewModel @Inject constructor(
 
     private val _landmarks = MutableStateFlow<List<Post>>(listOf())
     val landmarks: StateFlow<List<Post>> = _landmarks
+
+    private val _actionState = MutableStateFlow<ActionState?>(null)
+    val actionState: StateFlow<ActionState?> = _actionState
+
 
     init {
         updateUserInfo()
@@ -65,4 +71,27 @@ class ProfileViewModel @Inject constructor(
             }
         }
     }
+
+    fun logOut() {
+        clearUserInfo()
+        AGConnectAuth.getInstance().signOut()
+        unableSilentSignIn()
+
+    }
+
+    fun clearUserInfo() {
+        viewModelScope.launch {
+            dataStoreRepository.setCurrentUserEmail("")
+            dataStoreRepository.setCurrentUserId("")
+        }
+    }
+
+    fun unableSilentSignIn() {
+        viewModelScope.launch {
+            dataStoreRepository.setSilentSignInEnabled(false)
+            _actionState.value = ActionState.NavigateToRegister
+        }
+    }
+
+
 }
