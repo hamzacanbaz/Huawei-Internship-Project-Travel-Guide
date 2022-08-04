@@ -3,6 +3,7 @@ package com.canbazdev.hmskitsproject1.presentation.detail_post
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import androidx.databinding.DataBindingUtil
@@ -15,6 +16,8 @@ import com.canbazdev.hmskitsproject1.databinding.FragmentLandmarkDetailBinding
 import com.canbazdev.hmskitsproject1.presentation.base.BaseFragment
 import com.canbazdev.hmskitsproject1.util.ActionState
 import com.canbazdev.hmskitsproject1.util.Constants.LANDMARK_NO_FOUND
+import com.huawei.hms.kit.awareness.Awareness
+import com.huawei.hms.kit.awareness.capture.WeatherPosition
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -49,8 +52,12 @@ class LandmarkDetailFragment :
 
         }
 
+
+
         super.onViewCreated(view, savedInstanceState)
     }
+
+
 
     private fun setupDialog(qrUrl: String?) {
         val binding =
@@ -86,5 +93,6 @@ class LandmarkDetailFragment :
             startActivity(intent)
         }
     }
+
 
 }

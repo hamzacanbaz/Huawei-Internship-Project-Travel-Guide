@@ -25,7 +25,7 @@ android {
 
     defaultConfig {
         applicationId "com.canbazdev.hmskitsproject1"
-        minSdk 23
+        minSdk 24
         targetSdk 32
         versionCode 1
         versionName "1.0"
@@ -241,7 +241,8 @@ dependencies {
     // Scan Kit
     implementation 'com.huawei.hms:scan:2.6.0.300'
 
-
+    // Awareness Kit
+    implementation 'com.huawei.hms:awareness:3.1.0.302'
 
 
 }

@@ -102,7 +102,6 @@ class RemoteDataSourceImpl @Inject constructor(
     }
 
 
-
     override suspend fun uploadLandmarkQrCodeToStorage(uri: Uri, pathId: String): Uri {
         return suspendCoroutine { continuation ->
             println("uri -> $uri pathId -> $pathId")
@@ -161,6 +160,26 @@ class RemoteDataSourceImpl @Inject constructor(
     override suspend fun getLandmarkWithId(id: String): Post {
         return suspendCoroutine { continuation ->
             postsRepository.getLandmarkWithId(id).addOnSuccessListener {
+                continuation.resumeWith(Result.success(it))
+            }.addOnFailureListener {
+                continuation.resumeWithException(it)
+            }
+        }
+    }
+
+    override suspend fun insertLandmarkToWishList(id: String, post: Post): Post {
+        return suspendCoroutine { continuation ->
+            postsRepository.uploadLandmarkToWishList(id, post).addOnSuccessListener {
+                continuation.resumeWith(Result.success(it))
+            }.addOnFailureListener {
+                continuation.resumeWithException(it)
+            }
+        }
+    }
+
+    override suspend fun getAllWishListFromFirebase(id: String): List<Post> {
+        return suspendCoroutine { continuation ->
+            postsRepository.getAllWishListFromFirebase(id).addOnSuccessListener {
                 continuation.resumeWith(Result.success(it))
             }.addOnFailureListener {
                 continuation.resumeWithException(it)

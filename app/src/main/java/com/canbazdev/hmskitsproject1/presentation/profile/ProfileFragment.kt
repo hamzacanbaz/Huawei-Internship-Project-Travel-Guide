@@ -23,6 +23,11 @@ class ProfileFragment : Fragment() {
     private var _binding: FragmentProfileBinding? = null
     val binding: FragmentProfileBinding get() = _binding!!
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+
+        super.onCreate(savedInstanceState)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -33,17 +38,28 @@ class ProfileFragment : Fragment() {
             R.layout.fragment_profile,
             container,
             false
-        ).apply {
-            composeView.setContent {
-                MaterialTheme {
-                    GetProfileScreen(viewModel)
-                }
-            }
-        }
+        )
         return binding.root
     }
 
+    override fun onResume() {
+        viewModel.getPosts()
+        binding.composeView.setContent {
+            MaterialTheme {
+                GetProfileScreen(viewModel)
+            }
+        }
+
+        super.onResume()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        binding.composeView.setContent {
+            MaterialTheme {
+                GetProfileScreen(viewModel)
+            }
+        }
+
         lifecycleScope.launchWhenCreated {
             viewModel.actionState.collect {
                 when (it) {

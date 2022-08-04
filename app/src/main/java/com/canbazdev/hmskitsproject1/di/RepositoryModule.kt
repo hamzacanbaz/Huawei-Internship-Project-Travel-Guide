@@ -42,8 +42,11 @@ object RepositoryModule {
 
 
     @Provides
-    fun providePostsRepository(postsRef: CollectionReference): PostsRepository {
-        return PostsRepositoryImpl(postsRef)
+    fun providePostsRepository(
+        postsRef: CollectionReference,
+        db: FirebaseFirestore
+    ): PostsRepository {
+        return PostsRepositoryImpl(postsRef, db)
     }
 
     @Provides
@@ -60,7 +63,7 @@ object RepositoryModule {
         application: Application
     ): RemoteDataSource {
         return RemoteDataSourceImpl(
-            providePostsRepository(postsRef),
+            providePostsRepository(postsRef, db),
             provideLoginRepository(context, db),
             provideLocationRepository(application)
         )

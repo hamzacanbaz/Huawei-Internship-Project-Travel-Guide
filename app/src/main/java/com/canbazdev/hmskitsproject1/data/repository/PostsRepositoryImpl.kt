@@ -5,6 +5,7 @@ import com.canbazdev.hmskitsproject1.domain.model.landmark.Post
 import com.canbazdev.hmskitsproject1.domain.repository.PostsRepository
 import com.canbazdev.hmskitsproject1.util.Work
 import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import java.util.*
 import javax.inject.Inject
@@ -13,7 +14,9 @@ import javax.inject.Inject
 *   Created by hamzacanbaz on 7/21/2022
 */
 class PostsRepositoryImpl @Inject constructor(
-    private val postsRef: CollectionReference
+    private val postsRef: CollectionReference,
+    private val firebase: FirebaseFirestore
+
 ) : PostsRepository {
     override fun addPostToFirestore(post: Post): Work<Post> {
         val work = Work<Post>()
@@ -166,6 +169,63 @@ class PostsRepositoryImpl @Inject constructor(
                 work.onFailure(it)
             }
         return work
+    }
+
+    override fun uploadLandmarkToWishList(id: String, post: Post): Work<Post> {
+        val work = Work<Post>()
+
+        firebase.collection("users").document(id).collection("wishList").add(post)
+            .addOnSuccessListener {
+                work.onSuccess(post)
+
+            }.addOnFailureListener {
+                work.onFailure(it)
+
+            }
+        return work
+    }
+
+    override fun getAllWishListFromFirebase(id: String): Work<List<Post>> {
+        val work = Work<List<Post>>()
+        firebase.collection("users").document(id).collection("wishList").get()
+            .addOnSuccessListener {
+                if (!it.isEmpty) {
+                    val documents = it.documents
+                    val postsList = ArrayList<Post>()
+                    documents.forEach { d ->
+                        postsList.add(
+                            Post(
+                                landmarkImage = d.data?.get("landmarkImage")
+                                    ?.let { p -> p as String },
+                                landmarkInfo = d.data?.get("landmarkInfo")
+                                    ?.let { p -> p as String },
+                                landmarkLocation = d.data?.get("landmarkLocation")
+                                    ?.let { p -> p as String },
+                                landmarkLatitude = d.data?.get("landmarkLatitude")
+                                    ?.let { p -> p as Double },
+                                landmarkLongitude = d.data?.get("landmarkLongitude")
+                                    ?.let { p -> p as Double },
+                                landmarkName = d.data?.get("landmarkName")
+                                    ?.let { p -> p as String },
+                                authorId = d.data?.get("authorId")?.let { p -> p as String },
+                                id = d.data?.get("id")?.let { p -> p as String },
+                                qrUrl = d.data?.get("qrUrl")?.let { qr -> qr as String }
+
+                            )
+                        )
+
+
+                        println(d.data?.get("landmarkImage"))
+                    }
+                    work.onSuccess(postsList)
+                }
+
+            }
+            .addOnFailureListener {
+                work.onFailure(it)
+            }
+        return work
+
     }
 
 

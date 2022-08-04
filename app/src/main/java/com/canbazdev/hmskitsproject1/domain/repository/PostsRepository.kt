@@ -14,5 +14,8 @@ interface PostsRepository {
     fun getAllPostsFromFirebase(): Work<List<Post>>
     fun getPostsByUserId(userId: String): Work<List<Post>>
     fun getLandmarkWithId(id: String): Work<Post>
+    fun uploadLandmarkToWishList(id: String, post: Post): Work<Post>
+    fun getAllWishListFromFirebase(id: String): Work<List<Post>>
+
 
 }

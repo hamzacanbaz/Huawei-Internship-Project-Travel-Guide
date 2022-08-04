@@ -21,12 +21,14 @@ import com.huawei.hms.support.account.service.AccountAuthService
     suspend fun recognizeLandmark(landmarkImage: Bitmap): List<MLRemoteLandmark>
     suspend fun insertPost(post: Post): Post
     suspend fun uploadPostImageToStorage(uri: Uri): Uri
-    suspend fun uploadLandmarkQrCodeToStorage(uri: Uri, pathId:String): Uri
+    suspend fun uploadLandmarkQrCodeToStorage(uri: Uri, pathId: String): Uri
     suspend fun getAllPostsFromFirebase(): List<Post>
     suspend fun getNearbySites(lat: Double, lng: Double): List<Site>
     suspend fun insertUserToFirebase(userFirebase: UserFirebase): UserFirebase
     suspend fun getPostsByUserId(userId: String): List<Post>
-    suspend fun getLandmarkWithId(id:String): Post
+    suspend fun getLandmarkWithId(id: String): Post
+    suspend fun insertLandmarkToWishList(id: String, post: Post): Post
+    suspend fun getAllWishListFromFirebase(id: String): List<Post>
 
 
 }

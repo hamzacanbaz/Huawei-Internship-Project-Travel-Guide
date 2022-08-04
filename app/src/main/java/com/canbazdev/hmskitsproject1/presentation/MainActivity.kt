@@ -93,6 +93,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                     toolbar.visibility = View.GONE
                 }
 
+
                 else -> {
                     toolbar.visibility = View.VISIBLE
                     bottomNavigationView.visibility = View.VISIBLE

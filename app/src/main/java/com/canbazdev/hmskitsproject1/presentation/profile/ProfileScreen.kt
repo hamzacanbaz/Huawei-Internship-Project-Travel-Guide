@@ -1,22 +1,22 @@
 package com.canbazdev.hmskitsproject1.presentation.profile
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.material.Button
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.airbnb.lottie.compose.*
 import com.canbazdev.hmskitsproject1.R
-import com.canbazdev.hmskitsproject1.domain.model.landmark.Post
 
 /*
 *   Created by hamzacanbaz on 8/1/2022
@@ -26,21 +26,10 @@ import com.canbazdev.hmskitsproject1.domain.model.landmark.Post
 fun GetProfileScreen(profileViewModel: ProfileViewModel) {
     val userId by profileViewModel.userId.collectAsState()
     val userEmail by profileViewModel.userEmail.collectAsState()
-    val userLandmarks by profileViewModel.landmarks.collectAsState()
-    val userLandmarkss =
-        listOf<Post>(
-            Post(landmarkImage = "https://firebasestorage.googleapis.com/v0/b/hmskitsproject1.appspot.com/o/images%2F3f66553f-e28c-442f-8436-ff5565c03d10?alt=media&token=a25bee3d-ba63-4833-a8f0-1b06a5472ea1"),
-            Post(landmarkImage = "https://firebasestorage.googleapis.com/v0/b/hmskitsproject1.appspot.com/o/images%2F3f66553f-e28c-442f-8436-ff5565c03d10?alt=media&token=a25bee3d-ba63-4833-a8f0-1b06a5472ea1"),
-            Post(landmarkImage = "https://firebasestorage.googleapis.com/v0/b/hmskitsproject1.appspot.com/o/images%2F3f66553f-e28c-442f-8436-ff5565c03d10?alt=media&token=a25bee3d-ba63-4833-a8f0-1b06a5472ea1"),
-            Post(landmarkImage = "https://firebasestorage.googleapis.com/v0/b/hmskitsproject1.appspot.com/o/images%2F3f66553f-e28c-442f-8436-ff5565c03d10?alt=media&token=a25bee3d-ba63-4833-a8f0-1b06a5472ea1"),
-            Post(landmarkImage = "https://firebasestorage.googleapis.com/v0/b/hmskitsproject1.appspot.com/o/images%2F3f66553f-e28c-442f-8436-ff5565c03d10?alt=media&token=a25bee3d-ba63-4833-a8f0-1b06a5472ea1"),
-            Post(landmarkImage = "https://firebasestorage.googleapis.com/v0/b/hmskitsproject1.appspot.com/o/images%2F3f66553f-e28c-442f-8436-ff5565c03d10?alt=media&token=a25bee3d-ba63-4833-a8f0-1b06a5472ea1"),
-            Post(landmarkImage = "https://firebasestorage.googleapis.com/v0/b/hmskitsproject1.appspot.com/o/images%2F3f66553f-e28c-442f-8436-ff5565c03d10?alt=media&token=a25bee3d-ba63-4833-a8f0-1b06a5472ea1"),
-            Post(landmarkImage = "https://firebasestorage.googleapis.com/v0/b/hmskitsproject1.appspot.com/o/images%2F3f66553f-e28c-442f-8436-ff5565c03d10?alt=media&token=a25bee3d-ba63-4833-a8f0-1b06a5472ea1")
-        )
+    val currentLandmarks by profileViewModel.currentLandmarks.collectAsState(profileViewModel.landmarks.value)
 
-    var isLottiePlaying by remember { mutableStateOf(true) }
-    var animationSpeed by remember { mutableStateOf(1f) }
+    val isLottiePlaying by remember { mutableStateOf(true) }
+    val animationSpeed by remember { mutableStateOf(1f) }
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.avatar))
     val lottieAnimation by animateLottieCompositionAsState(
         composition,
@@ -79,13 +68,20 @@ fun GetProfileScreen(profileViewModel: ProfileViewModel) {
                     UserText(text = userEmail)
                 }
 
-                items(3 * (userLandmarks.size / 3) + 3) {
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    ShowImagesOrToDo(onChangeLandmarks = {
+                        println("SIZEEEE" + currentLandmarks.size)
+                        if (it == 0) profileViewModel.setSharedLandmarks() else profileViewModel.setWishListLandmarks()
+                    })
+                }
+
+                items(3 * (currentLandmarks.size / 3) + 3) {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier.padding(0.dp, 12.dp, 0.dp, 12.dp)
                     ) {
-                        if (it < userLandmarks.size) {
-                            userLandmarks[it].landmarkImage?.let { image ->
+                        if (it < currentLandmarks.size) {
+                            currentLandmarks[it].landmarkImage?.let { image ->
                                 GridImage(image = image)
                             }
 
@@ -128,7 +124,7 @@ fun GridImage(image: String) {
 fun LogoutButton(viewModel: ProfileViewModel) {
     Button(
         onClick = {
-                  viewModel.logOut()
+            viewModel.logOut()
         },
         modifier = Modifier
             .fillMaxWidth()
@@ -138,6 +134,104 @@ fun LogoutButton(viewModel: ProfileViewModel) {
     }
 }
 
+@Composable
+fun ShowImagesOrToDo(onChangeLandmarks: (id: Int) -> Unit) {
+    val cornerRadius = 8.dp
+    var selectedIndex by remember {
+        mutableStateOf(0)
+    }
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+    ) {
+        Spacer(modifier = Modifier.weight(1f))
+
+        OutlinedButton(
+            onClick = {
+                selectedIndex = 0
+                onChangeLandmarks.invoke(0)
+                println(selectedIndex)
+            },
+            shape =
+            RoundedCornerShape(
+                topStart = cornerRadius,
+                topEnd = 0.dp,
+                bottomStart = cornerRadius,
+                bottomEnd = 0.dp
+            ),
+            border = BorderStroke(
+                1.dp,
+                Color(0xFFF48FB1)
+            ), colors = if (selectedIndex == 0) {
+                // selected colors
+                ButtonDefaults.outlinedButtonColors(backgroundColor = Color(0xFFF48FB1))
+            } else {
+                // not selected colors
+                ButtonDefaults.outlinedButtonColors(backgroundColor = Color.White)
+            }
+        ) {
+            Text(
+                text = "Shared",
+                color = if (selectedIndex == 0) {
+                    Color.White
+                } else {
+                    Color.Gray
+                },
+                modifier = Modifier.padding(horizontal = 8.dp)
+            )
+
+        }
+        OutlinedButton(
+            onClick = {
+                selectedIndex = 1
+                onChangeLandmarks.invoke(1)
+                println(selectedIndex)
+            },
+            shape =
+            RoundedCornerShape(
+                topStart = 0.dp,
+                topEnd = cornerRadius,
+                bottomStart = 0.dp,
+                bottomEnd = cornerRadius
+            ),
+            border = BorderStroke(
+                1.dp, Color(0xFFF48FB1)
+            ),
+            colors = if (selectedIndex == 1) {
+                // selected colors
+                ButtonDefaults.outlinedButtonColors(backgroundColor = Color(0xFFF48FB1))
+            } else {
+                // not selected colors
+                ButtonDefaults.outlinedButtonColors(backgroundColor = Color.White)
+            }
+        ) {
+            Text(
+                text = "To Go",
+                color = if (selectedIndex == 1) {
+                    Color.White
+                } else {
+                    Color.Gray
+                },
+                modifier = Modifier.padding(horizontal = 8.dp)
+            )
+
+        }
+
+        Spacer(modifier = Modifier.weight(1f))
+    }
+}
+
+
+@Preview(showBackground = true)
+@Composable
+fun MyPreview() {
+    MaterialTheme {
+        ShowImagesOrToDo(onChangeLandmarks = {})
+
+    }
+}
 
 
 

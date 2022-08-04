@@ -86,8 +86,6 @@ class PostViewModel @Inject constructor(
 
     init {
         checkLocationOptions()
-
-
     }
 
     fun updateLandmarkName(s: Editable) {
