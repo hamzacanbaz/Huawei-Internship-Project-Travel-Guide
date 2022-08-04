@@ -113,6 +113,10 @@ class LandmarkDetailViewModel @Inject constructor(
     private fun getLocationCurrentWeather() {
 
         val TIME_DESCRIPTION_MAP = SparseArray<String>()
+        TIME_DESCRIPTION_MAP.put(TimeBarrier.TIME_CATEGORY_WEEKDAY, "Today is weekday.");
+        TIME_DESCRIPTION_MAP.put(TimeBarrier.TIME_CATEGORY_WEEKEND, "Today is weekend.");
+        TIME_DESCRIPTION_MAP.put(TimeBarrier.TIME_CATEGORY_HOLIDAY, "Today is holiday.");
+        TIME_DESCRIPTION_MAP.put(TimeBarrier.TIME_CATEGORY_NOT_HOLIDAY, "Today is not holiday.");
         TIME_DESCRIPTION_MAP.put(TimeBarrier.TIME_CATEGORY_MORNING, "Good morning.");
         TIME_DESCRIPTION_MAP.put(TimeBarrier.TIME_CATEGORY_AFTERNOON, "Good afternoon.");
         TIME_DESCRIPTION_MAP.put(TimeBarrier.TIME_CATEGORY_EVENING, "Good evening.");
@@ -123,7 +127,10 @@ class LandmarkDetailViewModel @Inject constructor(
             .addOnSuccessListener { timeCategoriesResponse: TimeCategoriesResponse ->
                 val categories = timeCategoriesResponse.timeCategories
                 val timeInfo = categories.timeCategories
-                println(TIME_DESCRIPTION_MAP.get(timeInfo.indices.last - 1))
+                for (timeCode in timeInfo) {
+                    println(TIME_DESCRIPTION_MAP.get(timeCode))
+                }
+               // println(TIME_DESCRIPTION_MAP.get(timeInfo.indices.last - 1))
                 //   Log.i("WEATHER INFO", stringBuilder.toString())
             }
             // Callback listener for execution failure.
