@@ -1,13 +1,16 @@
 package com.canbazdev.hmskitsproject1.presentation.home
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.canbazdev.hmskitsproject1.R
 import com.canbazdev.hmskitsproject1.databinding.FragmentHomeBinding
@@ -19,6 +22,7 @@ import com.canbazdev.hmskitsproject1.util.PermissionUtils
 import com.huawei.hms.ads.AdListener
 import com.huawei.hms.ads.AdParam
 import com.huawei.hms.hmsscankit.ScanUtil
+import com.huawei.hms.ml.scan.HmsScan
 import dagger.hilt.android.AndroidEntryPoint
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
@@ -83,6 +87,28 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home),
             }
         }
 
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode != AppCompatActivity.RESULT_OK || data == null) {
+            return
+        }
+        if (requestCode == 120) {
+            // Input an image for scanning and return the result.
+            var obj = data.getParcelableExtra(ScanUtil.RESULT) as HmsScan?
+            if (obj != null) {
+                // TODO BARKODA ID EKLE DETAIL'E ID GONDER ORADA FIREBASE'DEN CEKME ISLEMI YAP
+                println("OBJ ${obj.showResult}")
+                val bundle = Bundle()
+                bundle.putString("scanUuid", obj.showResult)
+                findNavController().navigate(
+                    R.id.action_global_landmarkDetailFragment,
+                    bundle
+                )
+
+            }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

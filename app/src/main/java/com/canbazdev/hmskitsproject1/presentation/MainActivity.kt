@@ -48,27 +48,27 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode != RESULT_OK || data == null) {
-            return
-        }
-        if (requestCode == 120) {
-            // Input an image for scanning and return the result.
-            var obj = data.getParcelableExtra(ScanUtil.RESULT) as HmsScan?
-            if (obj != null) {
-                // TODO BARKODA ID EKLE DETAIL'E ID GONDER ORADA FIREBASE'DEN CEKME ISLEMI YAP
-                println("OBJ ${obj.showResult}")
-                val bundle = Bundle()
-                bundle.putString("scanUuid", obj.showResult)
-                findNavController(R.id.nav_host_fragment).navigate(
-                    R.id.action_global_landmarkDetailFragment,
-                    bundle
-                )
-
-            }
-        }
-    }
+//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+//        super.onActivityResult(requestCode, resultCode, data)
+//        if (resultCode != RESULT_OK || data == null) {
+//            return
+//        }
+//        if (requestCode == 120) {
+//            // Input an image for scanning and return the result.
+//            var obj = data.getParcelableExtra(ScanUtil.RESULT) as HmsScan?
+//            if (obj != null) {
+//                // TODO BARKODA ID EKLE DETAIL'E ID GONDER ORADA FIREBASE'DEN CEKME ISLEMI YAP
+//                println("OBJ ${obj.showResult}")
+//                val bundle = Bundle()
+//                bundle.putString("scanUuid", obj.showResult)
+//                findNavController(R.id.nav_host_fragment).navigate(
+//                    R.id.action_global_landmarkDetailFragment,
+//                    bundle
+//                )
+//
+//            }
+//        }
+//    }
 
 
     private fun setUpBottomNavigationView(
@@ -121,5 +121,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(p0: HuaweiMap?) {
         TODO("Not yet implemented")
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        supportFragmentManager.fragments.first {
+            it.isVisible
+        }.childFragmentManager.fragments[0].onActivityResult(requestCode, resultCode, data)
+    }
+
 
 }
