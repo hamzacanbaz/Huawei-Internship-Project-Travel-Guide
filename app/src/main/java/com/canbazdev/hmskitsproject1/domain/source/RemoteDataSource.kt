@@ -29,6 +29,7 @@ import com.huawei.hms.support.account.service.AccountAuthService
     suspend fun getLandmarkWithId(id: String): Post
     suspend fun insertLandmarkToWishList(id: String, post: Post): Post
     suspend fun getAllWishListFromFirebase(id: String): List<Post>
+    suspend fun getTimeOfDay(): String
 
 
 }

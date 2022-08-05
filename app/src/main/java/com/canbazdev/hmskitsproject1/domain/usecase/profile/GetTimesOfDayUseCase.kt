@@ -1,0 +1,26 @@
+package com.canbazdev.hmskitsproject1.domain.usecase.profile
+
+import com.canbazdev.hmskitsproject1.domain.source.RemoteDataSource
+import com.canbazdev.hmskitsproject1.util.Resource
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
+
+/*
+*   Created by hamzacanbaz on 8/5/2022
+*/
+class GetTimesOfDayUseCase @Inject constructor(
+    private val remoteDataSource: RemoteDataSource
+) {
+    operator fun invoke(): Flow<Resource<String>> = flow {
+        emit(Resource.Loading())
+        try {
+            emit(Resource.Success(remoteDataSource.getTimeOfDay()))
+        } catch (e: Exception) {
+            emit(Resource.Error(errorMessage = e.localizedMessage ?: e.message!!))
+        }
+
+
+    }
+
+}

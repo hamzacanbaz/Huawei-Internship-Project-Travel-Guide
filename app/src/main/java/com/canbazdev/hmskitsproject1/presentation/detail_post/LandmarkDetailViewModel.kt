@@ -48,7 +48,6 @@ class LandmarkDetailViewModel @Inject constructor(
 
     init {
         getDetailLandmarkFromBundle()
-        getLocationCurrentWeather()
     }
 
     private fun getDetailLandmarkFromBundle() {
@@ -109,37 +108,4 @@ class LandmarkDetailViewModel @Inject constructor(
         }
     }
 
-    // TODO OGLEDEN SONRA AKSAM FALAN KONTROL ET DOGRU CALISMIYORSA SABRINAYA SOR CALISIRSA PROFILE GONDER
-    private fun getLocationCurrentWeather() {
-
-        val TIME_DESCRIPTION_MAP = SparseArray<String>()
-        TIME_DESCRIPTION_MAP.put(TimeBarrier.TIME_CATEGORY_WEEKDAY, "Today is weekday.");
-        TIME_DESCRIPTION_MAP.put(TimeBarrier.TIME_CATEGORY_WEEKEND, "Today is weekend.");
-        TIME_DESCRIPTION_MAP.put(TimeBarrier.TIME_CATEGORY_HOLIDAY, "Today is holiday.");
-        TIME_DESCRIPTION_MAP.put(TimeBarrier.TIME_CATEGORY_NOT_HOLIDAY, "Today is not holiday.");
-        TIME_DESCRIPTION_MAP.put(TimeBarrier.TIME_CATEGORY_MORNING, "Good morning.");
-        TIME_DESCRIPTION_MAP.put(TimeBarrier.TIME_CATEGORY_AFTERNOON, "Good afternoon.");
-        TIME_DESCRIPTION_MAP.put(TimeBarrier.TIME_CATEGORY_EVENING, "Good evening.");
-        TIME_DESCRIPTION_MAP.put(TimeBarrier.TIME_CATEGORY_NIGHT, "Good night.");
-
-        Awareness.getCaptureClient(getApplication() as Context).timeCategories
-            // Callback listener for execution success.
-            .addOnSuccessListener { timeCategoriesResponse: TimeCategoriesResponse ->
-                val categories = timeCategoriesResponse.timeCategories
-                val timeInfo = categories.timeCategories
-                for (timeCode in timeInfo) {
-                    println(TIME_DESCRIPTION_MAP.get(timeCode))
-                }
-               // println(TIME_DESCRIPTION_MAP.get(timeInfo.indices.last - 1))
-                //   Log.i("WEATHER INFO", stringBuilder.toString())
-            }
-            // Callback listener for execution failure.
-            .addOnFailureListener { e: Exception? ->
-                if (e != null) {
-                    Log.d("WEATHER INFO", e.localizedMessage ?: e.message.toString())
-                }
-            }
-
-
-    }
 }

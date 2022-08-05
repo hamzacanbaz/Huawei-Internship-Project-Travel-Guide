@@ -1,11 +1,13 @@
 package com.canbazdev.hmskitsproject1.presentation.profile
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.canbazdev.hmskitsproject1.data.repository.DataStoreRepository
 import com.canbazdev.hmskitsproject1.domain.model.landmark.Post
 import com.canbazdev.hmskitsproject1.domain.usecase.posts.GetPostsByUserIdUseCase
 import com.canbazdev.hmskitsproject1.domain.usecase.posts.GetWishListFromFirebaseUseCase
+import com.canbazdev.hmskitsproject1.domain.usecase.profile.GetTimesOfDayUseCase
 import com.canbazdev.hmskitsproject1.util.ActionState
 import com.canbazdev.hmskitsproject1.util.Resource
 import com.huawei.agconnect.auth.AGConnectAuth
@@ -22,8 +24,10 @@ import javax.inject.Inject
 class ProfileViewModel @Inject constructor(
     private val dataStoreRepository: DataStoreRepository,
     private val getPostsByUserIdUseCase: GetPostsByUserIdUseCase,
-    private val getWishListFromFirebaseUseCase: GetWishListFromFirebaseUseCase
-) : ViewModel() {
+    private val getWishListFromFirebaseUseCase: GetWishListFromFirebaseUseCase,
+    private val getTimesOfDayUseCase: GetTimesOfDayUseCase,
+    application: Application
+) : AndroidViewModel(application) {
     private val _userId = MutableStateFlow("")
     val userId: StateFlow<String> = _userId
 
@@ -34,7 +38,7 @@ class ProfileViewModel @Inject constructor(
     val landmarks: StateFlow<List<Post>> = _landmarks
 
     private val _wishListLandmarks = MutableStateFlow<List<Post>>(listOf())
-    val wishListLandmarks: StateFlow<List<Post>> = _wishListLandmarks
+    private val wishListLandmarks: StateFlow<List<Post>> = _wishListLandmarks
 
     private val _currentLandmarks = MutableStateFlow<List<Post>>(listOf())
     val currentLandmarks: StateFlow<List<Post>> = _currentLandmarks
@@ -42,12 +46,16 @@ class ProfileViewModel @Inject constructor(
     private val _actionState = MutableStateFlow<ActionState?>(null)
     val actionState: StateFlow<ActionState?> = _actionState
 
+    private val _dayTime = MutableStateFlow("")
+    val dayTime: StateFlow<String> = _dayTime
+
 
     init {
         println("SABRINA viewmodel init")
         updateUserInfo()
         getPosts()
         getWishListPosts()
+        getLocationCurrentWeather()
     }
 
     private fun updateUserInfo() {
@@ -100,6 +108,7 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
+
     fun setSharedLandmarks() {
         _currentLandmarks.value = listOf()
         _currentLandmarks.value = landmarks.value
@@ -129,6 +138,26 @@ class ProfileViewModel @Inject constructor(
             dataStoreRepository.setSilentSignInEnabled(false)
             _actionState.value = ActionState.NavigateToRegister
         }
+    }
+
+    private fun getLocationCurrentWeather() {
+
+        viewModelScope.launch {
+            getTimesOfDayUseCase.invoke().collect { result ->
+                when (result) {
+                    is Resource.Loading -> {
+                        println("loading")
+                    }
+                    is Resource.Success -> {
+                        _dayTime.value = result.data.toString()
+                    }
+                    is Resource.Error -> {
+                        _dayTime.value = "Good Day!"
+                    }
+                }
+            }
+        }
+
     }
 
 

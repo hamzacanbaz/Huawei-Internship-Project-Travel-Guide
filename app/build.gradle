@@ -9,13 +9,13 @@ plugins {
 android {
     signingConfigs {
         debug {
-            storeFile file('C:\\Users\\hmz\\AndroidStudioProjects\\Huawei-Internship-Project-Travel-Guide1\\app.jks')
+            storeFile file('D:\\projects\\HmsKitsProject1\\app.jks')
             storePassword '123456'
             keyAlias 'key'
             keyPassword '123456'
         }
         release {
-            storeFile file('C:\\Users\\hmz\\AndroidStudioProjects\\Huawei-Internship-Project-Travel-Guide1\\app.jks')
+            storeFile file('D:\\projects\\HmsKitsProject1\\app.jks')
             storePassword '123456'
             keyAlias 'key'
             keyPassword '123456'

@@ -7,6 +7,7 @@ import com.canbazdev.hmskitsproject1.domain.model.login.UserFirebase
 import com.canbazdev.hmskitsproject1.domain.repository.LocationRepository
 import com.canbazdev.hmskitsproject1.domain.repository.LoginRepository
 import com.canbazdev.hmskitsproject1.domain.repository.PostsRepository
+import com.canbazdev.hmskitsproject1.domain.repository.ProfileRepository
 import com.canbazdev.hmskitsproject1.domain.source.RemoteDataSource
 import com.huawei.hms.location.LocationSettingsResponse
 import com.huawei.hms.mlsdk.landmark.MLRemoteLandmark
@@ -22,7 +23,8 @@ import kotlin.coroutines.suspendCoroutine
 class RemoteDataSourceImpl @Inject constructor(
     private val postsRepository: PostsRepository,
     private val loginRepository: LoginRepository,
-    private val locationRepository: LocationRepository
+    private val locationRepository: LocationRepository,
+    private val profileRepository: ProfileRepository
 ) :
     RemoteDataSource {
     override suspend fun insertPost(post: Post): Post {
@@ -180,6 +182,16 @@ class RemoteDataSourceImpl @Inject constructor(
     override suspend fun getAllWishListFromFirebase(id: String): List<Post> {
         return suspendCoroutine { continuation ->
             postsRepository.getAllWishListFromFirebase(id).addOnSuccessListener {
+                continuation.resumeWith(Result.success(it))
+            }.addOnFailureListener {
+                continuation.resumeWithException(it)
+            }
+        }
+    }
+
+    override suspend fun getTimeOfDay(): String {
+        return suspendCoroutine { continuation ->
+            profileRepository.getTimeOfDay().addOnSuccessListener {
                 continuation.resumeWith(Result.success(it))
             }.addOnFailureListener {
                 continuation.resumeWithException(it)

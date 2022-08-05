@@ -26,6 +26,7 @@ import com.canbazdev.hmskitsproject1.R
 fun GetProfileScreen(profileViewModel: ProfileViewModel) {
     val userId by profileViewModel.userId.collectAsState()
     val userEmail by profileViewModel.userEmail.collectAsState()
+    val dayTime by profileViewModel.dayTime.collectAsState()
     val currentLandmarks by profileViewModel.currentLandmarks.collectAsState(profileViewModel.landmarks.value)
 
     val isLottiePlaying by remember { mutableStateOf(true) }
@@ -56,6 +57,11 @@ fun GetProfileScreen(profileViewModel: ProfileViewModel) {
                             .fillMaxWidth()
                             .height(200.dp)
                     )
+                }
+                item(
+                    span = { GridItemSpan(maxLineSpan) }
+                ) {
+                    UserText(text = dayTime)
                 }
                 item(
                     span = { GridItemSpan(maxLineSpan) }

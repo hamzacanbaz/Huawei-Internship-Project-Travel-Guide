@@ -5,10 +5,7 @@ import android.content.Context
 import com.canbazdev.hmskitsproject1.data.repository.*
 import com.canbazdev.hmskitsproject1.data.source.remote.AccessTokenService
 import com.canbazdev.hmskitsproject1.data.source.remote.LandmarkService
-import com.canbazdev.hmskitsproject1.domain.repository.LocationRepository
-import com.canbazdev.hmskitsproject1.domain.repository.LoginRepository
-import com.canbazdev.hmskitsproject1.domain.repository.NotificationRepository
-import com.canbazdev.hmskitsproject1.domain.repository.PostsRepository
+import com.canbazdev.hmskitsproject1.domain.repository.*
 import com.canbazdev.hmskitsproject1.domain.source.RemoteDataSource
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -65,7 +62,8 @@ object RepositoryModule {
         return RemoteDataSourceImpl(
             providePostsRepository(postsRef, db),
             provideLoginRepository(context, db),
-            provideLocationRepository(application)
+            provideLocationRepository(application),
+            provideProfileRepository(application)
         )
     }
 
@@ -75,6 +73,13 @@ object RepositoryModule {
         application: Application
     ): LocationRepository {
         return LocationRepositoryImpl(application, getSearchService(application.applicationContext))
+    }
+
+    @Provides
+    fun provideProfileRepository(
+        application: Application
+    ): ProfileRepository {
+        return ProfileRepositoryImpl(application.applicationContext)
     }
 
     @Provides

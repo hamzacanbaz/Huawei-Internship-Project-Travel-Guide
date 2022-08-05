@@ -6,7 +6,6 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -15,10 +14,8 @@ import com.canbazdev.hmskitsproject1.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.huawei.agconnect.AGConnectInstance
 import com.huawei.agconnect.api.AGConnectApi
-import com.huawei.hms.hmsscankit.ScanUtil
 import com.huawei.hms.maps.HuaweiMap
 import com.huawei.hms.maps.OnMapReadyCallback
-import com.huawei.hms.ml.scan.HmsScan
 import com.huawei.hms.site.api.SearchService
 import dagger.hilt.android.AndroidEntryPoint
 
