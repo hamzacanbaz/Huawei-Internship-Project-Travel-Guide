@@ -18,7 +18,6 @@ class CheckUserLoginUseCase @Inject constructor(
     private val loginRepository: LoginRepository,
     private val dataStoreRepository: DataStoreRepository
 ) {
-    @OptIn(ExperimentalCoroutinesApi::class)
     suspend operator fun invoke(coroutineScope: CoroutineScope) = channelFlow {
 
         dataStoreRepository.getSilentSignInEnabled.collect { isEnabled ->

@@ -2,6 +2,8 @@ package com.canbazdev.hmskitsproject1.util
 
 import android.app.AlertDialog
 import android.content.Context
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import android.widget.TextView
 import com.canbazdev.hmskitsproject1.R
@@ -17,6 +19,9 @@ class LoadingDialog(val context: Context, val message: String) {
             .setView(view)
             .setCancelable(false)
         dialog = builder.create()
+        dialog.window?.setBackgroundDrawable(
+            ColorDrawable(Color.TRANSPARENT)
+        )
         view.findViewById<TextView>(R.id.tvInfo).text = message
         dialog.show()
     }

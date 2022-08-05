@@ -41,9 +41,10 @@ object RepositoryModule {
     @Provides
     fun providePostsRepository(
         postsRef: CollectionReference,
-        db: FirebaseFirestore
+        db: FirebaseFirestore,
+        remoteDataSource: RemoteDataSource
     ): PostsRepository {
-        return PostsRepositoryImpl(postsRef, db)
+        return PostsRepositoryImpl(db, remoteDataSource)
     }
 
     @Provides
@@ -60,34 +61,35 @@ object RepositoryModule {
         application: Application
     ): RemoteDataSource {
         return RemoteDataSourceImpl(
-            providePostsRepository(postsRef, db),
-            provideLoginRepository(context, db),
-            provideLocationRepository(application),
-            provideProfileRepository(application)
+            postsRef,
+            getSearchService(application.applicationContext),
+            application,
+            db, context
         )
     }
 
 
     @Provides
     fun provideLocationRepository(
-        application: Application
+        remoteDataSource: RemoteDataSource
     ): LocationRepository {
-        return LocationRepositoryImpl(application, getSearchService(application.applicationContext))
+        return LocationRepositoryImpl(remoteDataSource)
     }
 
     @Provides
     fun provideProfileRepository(
-        application: Application
+        application: Application,
+        remoteDataSource: RemoteDataSource
     ): ProfileRepository {
-        return ProfileRepositoryImpl(application.applicationContext)
+        return ProfileRepositoryImpl(application.applicationContext, remoteDataSource)
     }
 
     @Provides
     fun provideLoginRepository(
         @ApplicationContext context: Context,
-        db: FirebaseFirestore
+        remoteDataSource: RemoteDataSource
     ): LoginRepository =
-        LoginRepositoryImpl(context, db)
+        LoginRepositoryImpl(context, remoteDataSource)
 
     @Provides
     fun provideNotificationRepository(

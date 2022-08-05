@@ -1,5 +1,9 @@
 package com.canbazdev.hmskitsproject1.presentation.map
 
+import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.net.Uri
 import android.os.Bundle
 import android.os.Looper
 import android.util.Log
@@ -123,7 +127,7 @@ class MapFragment : BaseFragment<FragmentMapBinding>(R.layout.fragment_map), OnM
         hMap?.setOnMarkerClickListener { marker ->
             println("marker clicked")
             Toast.makeText(context, marker.title, Toast.LENGTH_SHORT).show()
-
+            viewmodel.updateClickedMarkerName(marker.title)
             setupDialog(marker)
 
             false
@@ -137,13 +141,16 @@ class MapFragment : BaseFragment<FragmentMapBinding>(R.layout.fragment_map), OnM
             .setView(view)
 
         val dialog = builder.create()
+        dialog.window?.setBackgroundDrawable(
+            ColorDrawable(Color.TRANSPARENT)
+        )
         dialog.show()
         view.findViewById<ImageView>(R.id.ivShowNearby).setOnClickListener {
             viewmodel.setNearbyLocationTitle(marker.position)
             dialog.dismiss()
         }
         view.findViewById<ImageView>(R.id.ivGoToMap).setOnClickListener {
-            Toast.makeText(context, "GO TO MAP", Toast.LENGTH_SHORT).show()
+            goToPetalMaps()
             dialog.dismiss()
         }
     }
@@ -193,6 +200,16 @@ class MapFragment : BaseFragment<FragmentMapBinding>(R.layout.fragment_map), OnM
 
                 }
             }
+    }
+
+    private fun goToPetalMaps() {
+        val uriString =
+            "petalmaps://textSearch?text=" + viewmodel.clickedMarkerName.value
+        val contentUrl: Uri = Uri.parse(uriString)
+        val intent = Intent(Intent.ACTION_VIEW, contentUrl)
+        if (activity?.let { it1 -> intent.resolveActivity(it1.packageManager) } != null) {
+            startActivity(intent)
+        }
     }
 
 

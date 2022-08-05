@@ -3,228 +3,109 @@ package com.canbazdev.hmskitsproject1.data.repository
 import android.net.Uri
 import com.canbazdev.hmskitsproject1.domain.model.landmark.Post
 import com.canbazdev.hmskitsproject1.domain.repository.PostsRepository
-import com.canbazdev.hmskitsproject1.util.Work
-import com.google.firebase.firestore.CollectionReference
+import com.canbazdev.hmskitsproject1.domain.source.RemoteDataSource
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.storage.FirebaseStorage
-import java.util.*
 import javax.inject.Inject
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 /*
 *   Created by hamzacanbaz on 7/21/2022
 */
 class PostsRepositoryImpl @Inject constructor(
-    private val postsRef: CollectionReference,
-    private val firebase: FirebaseFirestore
+    private val firebase: FirebaseFirestore,
+    private val remoteDataSource: RemoteDataSource
 
 ) : PostsRepository {
-    override fun addPostToFirestore(post: Post): Work<Post> {
-        val work = Work<Post>()
-        println(postsRef)
-        postsRef.document().set(post).addOnSuccessListener {
-            work.onSuccess(post)
-
-        }.addOnFailureListener {
-            work.onFailure(it)
-
+    override suspend fun addPostToFirestore(post: Post): Post {
+        return suspendCoroutine { continuation ->
+            remoteDataSource.insertPost(post)
+                .addOnSuccessListener {
+                    continuation.resumeWith(Result.success(it))
+                }.addOnFailureListener {
+                    continuation.resumeWithException(it)
+                }
         }
-        return work
+
     }
 
-    override fun uploadPostImageToStorage(uri: Uri): Work<Uri> {
-        val work = Work<Uri>()
-        val storage = FirebaseStorage.getInstance()
-        val location = "images/" + UUID.randomUUID().toString()
-        storage.getReference(location)
-            .putFile(uri)
-            .addOnSuccessListener {
-                storage.getReference(location).downloadUrl.addOnSuccessListener {
-                    work.onSuccess(it)
+    override suspend fun uploadPostImageToStorage(uri: Uri): Uri {
+        return suspendCoroutine { continuation ->
+            remoteDataSource.uploadPostImageToStorage(uri)
+                .addOnSuccessListener {
+                    continuation.resumeWith(Result.success(it))
+                }.addOnFailureListener {
+                    continuation.resumeWithException(it)
                 }
-            }.addOnFailureListener { e ->
-                work.onFailure(e)
-            }
-        return work
-    }
-
-    override fun uploadLandmarkQrCodeToStorage(uri: Uri, pathId: String): Work<Uri> {
-        val work = Work<Uri>()
-        val storage = FirebaseStorage.getInstance()
-        val location = "qrCodes/$pathId"
-        storage.getReference(location)
-            .putFile(uri)
-            .addOnSuccessListener {
-                storage.getReference(location).downloadUrl.addOnSuccessListener {
-                    work.onSuccess(it)
-                }
-            }.addOnFailureListener { e ->
-                work.onFailure(e)
-            }
-        return work
-    }
-
-    override fun getAllPostsFromFirebase(): Work<List<Post>> {
-        val work = Work<List<Post>>()
-        postsRef.get().addOnSuccessListener {
-            if (!it.isEmpty) {
-                val documents = it.documents
-                val postsList = ArrayList<Post>()
-                documents.forEach { d ->
-                    postsList.add(
-                        Post(
-                            landmarkImage = d.data?.get("landmarkImage")?.let { p -> p as String },
-                            landmarkInfo = d.data?.get("landmarkInfo")?.let { p -> p as String },
-                            landmarkLocation = d.data?.get("landmarkLocation")
-                                ?.let { p -> p as String },
-                            landmarkLatitude = d.data?.get("landmarkLatitude")
-                                ?.let { p -> p as Double },
-                            landmarkLongitude = d.data?.get("landmarkLongitude")
-                                ?.let { p -> p as Double },
-                            landmarkName = d.data?.get("landmarkName")?.let { p -> p as String },
-                            authorId = d.data?.get("authorId")?.let { p -> p as String },
-                            id = d.data?.get("id")?.let { p -> p as String },
-                            qrUrl = d.data?.get("qrUrl")?.let { qr -> qr as String }
-
-                        )
-                    )
-                    println(d.data?.get("landmarkImage"))
-                }
-                work.onSuccess(postsList)
-            }
-        }.addOnFailureListener { work.onFailure(it) }
-        return work
-    }
-
-    override fun getPostsByUserId(userId: String): Work<List<Post>> {
-        val work = Work<List<Post>>()
-        postsRef.get().addOnSuccessListener {
-            if (!it.isEmpty) {
-                val documents = it.documents
-                val postsList = ArrayList<Post>()
-                documents.forEach { d ->
-                    if (d.data?.get("authorId")?.equals(userId) == true) {
-                        postsList.add(
-                            Post(
-                                landmarkImage = d.data?.get("landmarkImage")
-                                    ?.let { p -> p as String },
-                                landmarkInfo = d.data?.get("landmarkInfo")
-                                    ?.let { p -> p as String },
-                                landmarkLocation = d.data?.get("landmarkLocation")
-                                    ?.let { p -> p as String },
-                                landmarkLatitude = d.data?.get("landmarkLatitude")
-                                    ?.let { p -> p as Double },
-                                landmarkLongitude = d.data?.get("landmarkLongitude")
-                                    ?.let { p -> p as Double },
-                                landmarkName = d.data?.get("landmarkName")
-                                    ?.let { p -> p as String },
-                                authorId = d.data?.get("authorId")?.let { p -> p as String },
-                                id = d.data?.get("id")?.let { p -> p as String },
-                                qrUrl = d.data?.get("qrUrl")?.let { qr -> qr as String }
-
-                            )
-                        )
-
-                    }
-                    println(d.data?.get("landmarkImage"))
-                }
-                work.onSuccess(postsList)
-            }
-
         }
-            .addOnFailureListener {
-                work.onFailure(it)
-            }
-        return work
+
     }
 
-    override fun getLandmarkWithId(id: String): Work<Post> {
-        val work = Work<Post>()
-        postsRef.get().addOnSuccessListener {
-            if (!it.isEmpty) {
-                val documents = it.documents
-                var post = Post()
-                documents.forEach { d ->
-                    if (d.data?.get("id")?.equals(id) == true) {
-                        post = Post(
-                            landmarkImage = d.data?.get("landmarkImage")?.let { p -> p as String },
-                            landmarkInfo = d.data?.get("landmarkInfo")?.let { p -> p as String },
-                            landmarkLocation = d.data?.get("landmarkLocation")
-                                ?.let { p -> p as String },
-                            landmarkLatitude = d.data?.get("landmarkLatitude")
-                                ?.let { p -> p as Double },
-                            landmarkLongitude = d.data?.get("landmarkLongitude")
-                                ?.let { p -> p as Double },
-                            landmarkName = d.data?.get("landmarkName")?.let { p -> p as String },
-                            authorId = d.data?.get("authorId")?.let { p -> p as String },
-                            id = d.data?.get("id")?.let { p -> p as String },
-                            qrUrl = d.data?.get("qrUrl")?.let { qr -> qr as String }
-                        )
-                    }
+    override suspend fun uploadLandmarkQrCodeToStorage(uri: Uri, pathId: String): Uri {
+        return suspendCoroutine { continuation ->
+            println("uri -> $uri pathId -> $pathId")
+            remoteDataSource.uploadLandmarkQrCodeToStorage(uri, pathId)
+                .addOnSuccessListener {
+                    continuation.resumeWith(Result.success(it))
+                }.addOnFailureListener {
+                    continuation.resumeWithException(it)
                 }
-                work.onSuccess(post)
-            }
-
         }
-            .addOnFailureListener {
-                work.onFailure(it)
-            }
-        return work
+
     }
 
-    override fun uploadLandmarkToWishList(id: String, post: Post): Work<Post> {
-        val work = Work<Post>()
+    override suspend fun getAllPostsFromFirebase(): List<Post> {
+        return suspendCoroutine { continuation ->
+            remoteDataSource.getAllPostsFromFirebase()
+                .addOnSuccessListener {
+                    continuation.resumeWith(Result.success(it))
+                }.addOnFailureListener {
+                    continuation.resumeWithException(it)
+                }
+        }
 
-        firebase.collection("users").document(id).collection("wishList").add(post)
-            .addOnSuccessListener {
-                work.onSuccess(post)
+    }
 
+    override suspend fun getPostsByUserId(userId: String): List<Post> {
+        return suspendCoroutine { continuation ->
+            remoteDataSource.getPostsByUserId(userId).addOnSuccessListener {
+                continuation.resumeWith(Result.success(it))
             }.addOnFailureListener {
-                work.onFailure(it)
-
+                continuation.resumeWithException(it)
             }
-        return work
+        }
     }
 
-    override fun getAllWishListFromFirebase(id: String): Work<List<Post>> {
-        val work = Work<List<Post>>()
-        firebase.collection("users").document(id).collection("wishList").get()
-            .addOnSuccessListener {
-                if (!it.isEmpty) {
-                    val documents = it.documents
-                    val postsList = ArrayList<Post>()
-                    documents.forEach { d ->
-                        postsList.add(
-                            Post(
-                                landmarkImage = d.data?.get("landmarkImage")
-                                    ?.let { p -> p as String },
-                                landmarkInfo = d.data?.get("landmarkInfo")
-                                    ?.let { p -> p as String },
-                                landmarkLocation = d.data?.get("landmarkLocation")
-                                    ?.let { p -> p as String },
-                                landmarkLatitude = d.data?.get("landmarkLatitude")
-                                    ?.let { p -> p as Double },
-                                landmarkLongitude = d.data?.get("landmarkLongitude")
-                                    ?.let { p -> p as Double },
-                                landmarkName = d.data?.get("landmarkName")
-                                    ?.let { p -> p as String },
-                                authorId = d.data?.get("authorId")?.let { p -> p as String },
-                                id = d.data?.get("id")?.let { p -> p as String },
-                                qrUrl = d.data?.get("qrUrl")?.let { qr -> qr as String }
-
-                            )
-                        )
-
-
-                        println(d.data?.get("landmarkImage"))
-                    }
-                    work.onSuccess(postsList)
-                }
-
+    override suspend fun getLandmarkWithId(id: String): Post {
+        return suspendCoroutine { continuation ->
+            remoteDataSource.getLandmarkWithId(id).addOnSuccessListener {
+                continuation.resumeWith(Result.success(it))
+            }.addOnFailureListener {
+                continuation.resumeWithException(it)
             }
-            .addOnFailureListener {
-                work.onFailure(it)
+        }
+    }
+
+    override suspend fun uploadLandmarkToWishList(id: String, post: Post): Post {
+        return suspendCoroutine { continuation ->
+            remoteDataSource.insertLandmarkToWishList(id, post).addOnSuccessListener {
+                continuation.resumeWith(Result.success(it))
+            }.addOnFailureListener {
+                continuation.resumeWithException(it)
             }
-        return work
+        }
+
+    }
+
+    override suspend fun getAllWishListFromFirebase(id: String): List<Post> {
+        return suspendCoroutine { continuation ->
+            remoteDataSource.getAllWishListFromFirebase(id).addOnSuccessListener {
+                continuation.resumeWith(Result.success(it))
+            }.addOnFailureListener {
+                continuation.resumeWithException(it)
+            }
+        }
+
 
     }
 

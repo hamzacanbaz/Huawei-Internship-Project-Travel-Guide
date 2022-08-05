@@ -31,6 +31,9 @@ class MapViewModel @Inject constructor(
     private val _nearbyLocationLatLng: MutableStateFlow<LatLng> = MutableStateFlow(LatLng(0.0, 0.0))
     val nearbyLocationLatLng: StateFlow<LatLng> = _nearbyLocationLatLng
 
+    private val _clickedMarkerName: MutableStateFlow<String> = MutableStateFlow("")
+    val clickedMarkerName: StateFlow<String> = _clickedMarkerName
+
     private val _nearbyLandmarksList: MutableStateFlow<List<NearbyLandmark>> = MutableStateFlow(
         listOf()
     )
@@ -38,6 +41,10 @@ class MapViewModel @Inject constructor(
 
     init {
         getAllPostsFromFirebase()
+    }
+
+    fun updateClickedMarkerName(title: String) {
+        _clickedMarkerName.value = title
     }
 
     private fun getAllPostsFromFirebase() {
