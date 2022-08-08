@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.canbazdev.hmskitsproject1.data.repository.DataStoreRepository
 import com.canbazdev.hmskitsproject1.domain.model.landmark.Post
+import com.canbazdev.hmskitsproject1.domain.usecase.posts.DeleteLandmarkFromWishList
 import com.canbazdev.hmskitsproject1.domain.usecase.posts.GetPostsByUserIdUseCase
 import com.canbazdev.hmskitsproject1.domain.usecase.posts.GetWishListFromFirebaseUseCase
 import com.canbazdev.hmskitsproject1.domain.usecase.profile.GetTimesOfDayUseCase
@@ -12,6 +13,7 @@ import com.canbazdev.hmskitsproject1.util.ActionState
 import com.canbazdev.hmskitsproject1.util.Resource
 import com.huawei.agconnect.auth.AGConnectAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
+import es.dmoral.toasty.Toasty
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -26,6 +28,7 @@ class ProfileViewModel @Inject constructor(
     private val getPostsByUserIdUseCase: GetPostsByUserIdUseCase,
     private val getWishListFromFirebaseUseCase: GetWishListFromFirebaseUseCase,
     private val getTimesOfDayUseCase: GetTimesOfDayUseCase,
+    private val deleteLandmarkFromWishList: DeleteLandmarkFromWishList,
     application: Application
 ) : AndroidViewModel(application) {
     private val _userId = MutableStateFlow("")
@@ -49,6 +52,8 @@ class ProfileViewModel @Inject constructor(
     private val _dayTime = MutableStateFlow("")
     val dayTime: StateFlow<String> = _dayTime
 
+    private lateinit var currentUserId: String
+
 
     init {
         println("SABRINA viewmodel init")
@@ -56,6 +61,15 @@ class ProfileViewModel @Inject constructor(
         getPosts()
         getWishListPosts()
         getLocationCurrentWeather()
+        initializeUserId()
+    }
+
+    private fun initializeUserId() {
+        viewModelScope.launch {
+            dataStoreRepository.getCurrentUserId.collect {
+                currentUserId = it
+            }
+        }
     }
 
     private fun updateUserInfo() {
@@ -108,6 +122,23 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
+    fun removeFromWishList(postId: String) {
+        viewModelScope.launch {
+            deleteLandmarkFromWishList.invoke(currentUserId, postId)
+                .collect {
+                    if (it is Resource.Success) {
+                        Toasty.success(
+                            getApplication(),
+                            "Landmark Removed Successfully",
+                            Toasty.LENGTH_SHORT
+                        ).show()
+                        getWishListPosts()
+                        setWishListLandmarks()
+                    }
+                }
+        }
+    }
+
 
     fun setSharedLandmarks() {
         _currentLandmarks.value = listOf()
@@ -115,6 +146,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun setWishListLandmarks() {
+        getWishListPosts()
         _currentLandmarks.value = listOf()
         _currentLandmarks.value = wishListLandmarks.value
     }

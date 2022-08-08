@@ -1,6 +1,5 @@
 package com.canbazdev.hmskitsproject1.data.model
 
-import com.canbazdev.hmskitsproject1.PushKitService
 import com.google.gson.annotations.SerializedName
 
 

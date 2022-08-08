@@ -109,6 +109,16 @@ class PostsRepositoryImpl @Inject constructor(
 
     }
 
+    override suspend fun deleteLandmarkFromWishList(userId: String, landmarkId: String): String {
+        return suspendCoroutine { continuation ->
+            remoteDataSource.deleteLandmarkFromWishList(userId, landmarkId).addOnSuccessListener {
+                continuation.resumeWith(Result.success(it))
+            }.addOnFailureListener {
+                continuation.resumeWithException(it)
+            }
+        }
+    }
+
 
     /* private fun callUserEnd(
          work: Work<Post>,

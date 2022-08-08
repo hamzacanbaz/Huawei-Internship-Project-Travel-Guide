@@ -4,6 +4,7 @@ import android.app.Application
 import android.text.Editable
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.canbazdev.hmskitsproject1.domain.model.login.UserFirebase
 import com.canbazdev.hmskitsproject1.domain.usecase.login.*
 import com.canbazdev.hmskitsproject1.util.Resource
 import com.canbazdev.hmskitsproject1.util.SilentSignInStatus
@@ -11,7 +12,6 @@ import com.huawei.hms.support.account.service.AccountAuthService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -25,6 +25,7 @@ class LoginViewModel @Inject constructor(
     private val signInWithHuaweiIdUseCase: SignInWithHuaweiIdUseCase,
     private val signOutWithHuaweiUseCase: SignOutWithHuaweiUseCase,
     private val signInWithEmailUseCase: SignInWithEmailUseCase,
+    private val insertUserToFirebaseUseCase: InsertUserToFirebaseUseCase,
     application: Application
 ) :
     AndroidViewModel(application) {
@@ -63,9 +64,12 @@ class LoginViewModel @Inject constructor(
                 when (result) {
                     is Resource.Success -> {
                         _huaweiSignIn.value = result.data
-                        _isUserSignedIn.value = true
                         result.data?.silentSignIn()?.addOnSuccessListener {
+                            _userEmail.value = it.email
+                            _userId.value = it.unionId
                             _userName.value = it.displayName
+                            insertUserToFirebase()
+                            _isUserSignedIn.value = true
                         }
                         setSilentSigninEnabled(true)
                         _uiState.value = 1
@@ -122,6 +126,21 @@ class LoginViewModel @Inject constructor(
             setEnabledSilentSignInUseCase.invoke(isEnabled)
         }
     }
+
+    private fun insertUserToFirebase() {
+        var userFirebase = UserFirebase()
+        userFirebase = userFirebase.copy(email = userEmail.value, id = userId.value)
+        viewModelScope.launch {
+            insertUserToFirebaseUseCase.invoke(userFirebase).collect {
+                when (it) {
+                    is Resource.Success -> println("added to fb")
+                    is Resource.Loading -> println("loading fb")
+                    is Resource.Error -> println("failed to fb")
+                }
+            }
+        }
+    }
+
 
     /* fun signOutHuawei() {
 

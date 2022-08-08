@@ -1,4 +1,4 @@
-package com.canbazdev.hmskitsproject1
+package com.canbazdev.hmskitsproject1.kit
 
 import android.os.Bundle
 import android.util.Log

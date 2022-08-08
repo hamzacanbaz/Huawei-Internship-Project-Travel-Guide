@@ -32,20 +32,10 @@
         android:theme="@style/Theme.HmsKitsProject1"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
-        <activity
-            android:name=".presentation.LoginActivity"
-            android:exported="true"
-            android:label="@string/title_activity_login"
-            android:theme="@style/Theme.HmsKitsProject1">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
 
         <service
-            android:name=".PushKitService"
+            android:name=".kit.PushKitService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.huawei.push.action.MESSAGING_EVENT" />
@@ -70,7 +60,13 @@
 
         <activity
             android:name=".presentation.MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/Theme.HmsKitsProject1">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
 
         </activity>
     </application>

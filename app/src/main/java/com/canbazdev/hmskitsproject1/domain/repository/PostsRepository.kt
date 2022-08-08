@@ -16,5 +16,6 @@ interface PostsRepository {
     suspend fun getLandmarkWithId(id: String): Post
     suspend fun uploadLandmarkToWishList(id: String, post: Post): Post
     suspend fun getAllWishListFromFirebase(id: String): List<Post>
+    suspend fun deleteLandmarkFromWishList(userId: String,landmarkId: String): String
 
 }

@@ -13,6 +13,7 @@ import android.text.TextUtils
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.canbazdev.hmskitsproject1.data.repository.DataStoreRepository
 import com.canbazdev.hmskitsproject1.domain.model.landmark.Post
 import com.canbazdev.hmskitsproject1.domain.usecase.location.CheckLocationOptionsUseCase
 import com.canbazdev.hmskitsproject1.domain.usecase.location.RecognizeLandmarkUseCase
@@ -23,7 +24,6 @@ import com.canbazdev.hmskitsproject1.domain.usecase.posts.InsertPostUseCase
 import com.canbazdev.hmskitsproject1.util.ActionState
 import com.canbazdev.hmskitsproject1.util.Constants
 import com.canbazdev.hmskitsproject1.util.Resource
-import com.huawei.agconnect.auth.AGConnectAuth
 import com.huawei.agconnect.config.AGConnectServicesConfig
 import com.huawei.hms.aaid.HmsInstanceId
 import com.huawei.hms.hmsscankit.ScanUtil
@@ -50,7 +50,8 @@ class PostViewModel @Inject constructor(
     private val recognizeLandmarkUseCase: RecognizeLandmarkUseCase,
     private val insertPostImageToStorageUseCase: InsertPostImageToStorageUseCase,
     private val sendNotificationUseCase: SendNotificationUseCase,
-    private val insertLandmarkQrCodeToStorageUseCase: InsertLandmarkQrCodeToStorageUseCase
+    private val insertLandmarkQrCodeToStorageUseCase: InsertLandmarkQrCodeToStorageUseCase,
+    private val dataStoreRepository: DataStoreRepository
 
 ) : AndroidViewModel(application) {
 
@@ -81,11 +82,19 @@ class PostViewModel @Inject constructor(
 
     var pushToken = ""
 
-    private val qrCode = MutableStateFlow<Uri>(Uri.EMPTY)
     private val postId = UUID.randomUUID().toString()
+
+    lateinit var currentUserId: String
+
 
     init {
         checkLocationOptions()
+        viewModelScope.launch {
+            dataStoreRepository.getCurrentUserId.collect {
+                currentUserId = it
+            }
+        }
+
     }
 
     fun updateLandmarkName(s: Editable) {
@@ -113,7 +122,7 @@ class PostViewModel @Inject constructor(
         viewModelScope.launch {
             val post = this@PostViewModel.post.value.copy(
                 id = postId,
-                authorId = AGConnectAuth.getInstance().currentUser.uid
+                authorId = currentUserId
             )
 
             insertPostUseCase.invoke(post).collect { result ->

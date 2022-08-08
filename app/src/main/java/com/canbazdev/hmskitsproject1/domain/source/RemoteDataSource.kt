@@ -29,6 +29,7 @@ import com.huawei.hms.support.account.service.AccountAuthService
     fun getLandmarkWithId(id: String): Work<Post>
     fun insertLandmarkToWishList(id: String, post: Post): Work<Post>
     fun getAllWishListFromFirebase(id: String): Work<List<Post>>
+    fun deleteLandmarkFromWishList(userId:String, landmarkId:String): Work<String>
 
     fun checkLocationOptions(): Work<LocationSettingsResponse>
     fun recognizeLandmark(landmarkImage: Bitmap): Work<List<MLRemoteLandmark>>

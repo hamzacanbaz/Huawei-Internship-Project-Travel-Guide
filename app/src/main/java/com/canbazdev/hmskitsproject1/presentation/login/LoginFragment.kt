@@ -31,9 +31,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(R.layout.fragment_login
             viewModel.uiState.collect {
                 println("ui state $it")
             }
-            viewModel.userName.collect {
-                println("name : $it")
-            }
+
 
         }
 
@@ -54,9 +52,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(R.layout.fragment_login
                     findNavController().navigate(R.id.action_loginFragment_to_homeFragment, bundle)
                 }
             }
-            viewModel.isUserSignedIn.collect {
-                println("signed in $it")
-            }
+
         }
     }
 

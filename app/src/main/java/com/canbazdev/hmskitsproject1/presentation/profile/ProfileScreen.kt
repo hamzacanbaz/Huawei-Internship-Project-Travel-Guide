@@ -1,6 +1,7 @@
 package com.canbazdev.hmskitsproject1.presentation.profile
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -8,6 +9,8 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -17,6 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.airbnb.lottie.compose.*
 import com.canbazdev.hmskitsproject1.R
+import com.canbazdev.hmskitsproject1.domain.model.landmark.Post
 
 /*
 *   Created by hamzacanbaz on 8/1/2022
@@ -28,6 +32,9 @@ fun GetProfileScreen(profileViewModel: ProfileViewModel) {
     val userEmail by profileViewModel.userEmail.collectAsState()
     val dayTime by profileViewModel.dayTime.collectAsState()
     val currentLandmarks by profileViewModel.currentLandmarks.collectAsState(profileViewModel.landmarks.value)
+    var alertDialogOpened by remember { mutableStateOf(false) }
+    var clickedLandmark by remember { mutableStateOf(Post()) }
+    var selectedSharedOrToGo by remember { mutableStateOf(0) }
 
     val isLottiePlaying by remember { mutableStateOf(true) }
     val animationSpeed by remember { mutableStateOf(1f) }
@@ -42,6 +49,17 @@ fun GetProfileScreen(profileViewModel: ProfileViewModel) {
 
     Surface(color = Color.White, modifier = Modifier.fillMaxSize()) {
         Column {
+            AlertDialog(
+                openDialog = alertDialogOpened,
+                closeDialog = { alertDialogOpened = false },
+                deleteItemAndCloseDialog = {
+                    profileViewModel.removeFromWishList(clickedLandmark.id ?: " ")
+                    profileViewModel.setWishListLandmarks()
+                    alertDialogOpened = false
+                },
+                clickedLandmark,
+                selectedSharedOrToGo
+            )
 
             LazyVerticalGrid(
                 columns = GridCells.Fixed(3)
@@ -76,7 +94,7 @@ fun GetProfileScreen(profileViewModel: ProfileViewModel) {
 
                 item(span = { GridItemSpan(maxLineSpan) }) {
                     ShowImagesOrToDo(onChangeLandmarks = {
-                        println("SIZEEEE" + currentLandmarks.size)
+                        selectedSharedOrToGo = it
                         if (it == 0) profileViewModel.setSharedLandmarks() else profileViewModel.setWishListLandmarks()
                     })
                 }
@@ -88,7 +106,13 @@ fun GetProfileScreen(profileViewModel: ProfileViewModel) {
                     ) {
                         if (it < currentLandmarks.size) {
                             currentLandmarks[it].landmarkImage?.let { image ->
-                                GridImage(image = image)
+                                GridImage(landmark = currentLandmarks[it], selectedLandmark = {
+                                    if (selectedSharedOrToGo == 1) {
+                                        alertDialogOpened = true
+                                        clickedLandmark = it
+
+                                    }
+                                })
                             }
 
                         }
@@ -116,13 +140,14 @@ fun UserText(text: String) {
 }
 
 @Composable
-fun GridImage(image: String) {
+fun GridImage(landmark: Post, selectedLandmark: (Post) -> Unit) {
     com.skydoves.landscapist.glide.GlideImage(
-        imageModel = image,
+        imageModel = landmark.landmarkImage,
         contentScale = ContentScale.Crop,
         modifier = Modifier
             .width(100.dp)
             .height(100.dp)
+            .clickable { selectedLandmark(landmark) }
     )
 }
 
@@ -143,7 +168,7 @@ fun LogoutButton(viewModel: ProfileViewModel) {
 @Composable
 fun ShowImagesOrToDo(onChangeLandmarks: (id: Int) -> Unit) {
     val cornerRadius = 8.dp
-    var selectedIndex by remember {
+    var selectedIndex by rememberSaveable {
         mutableStateOf(0)
     }
 
@@ -227,6 +252,62 @@ fun ShowImagesOrToDo(onChangeLandmarks: (id: Int) -> Unit) {
 
         Spacer(modifier = Modifier.weight(1f))
     }
+}
+
+@Composable
+fun AlertDialog(
+    openDialog: Boolean,
+    closeDialog: () -> Unit,
+    deleteItemAndCloseDialog: () -> Unit,
+    landmark: Post,
+    selectedSharedOrToGo: Int
+) {
+    Column {
+        //val openDialog = remember { mutableStateOf(false) }
+
+
+        if (openDialog) {
+
+            AlertDialog(
+                onDismissRequest = {
+                    // Dismiss the dialog when the user clicks outside the dialog or on the back
+                    // button. If you want to disable that functionality, simply use an empty
+                    // onCloseRequest.
+                    closeDialog()
+                },
+                title = {
+                    Text(text = "${landmark.landmarkName}", modifier = Modifier.fillMaxWidth())
+                },
+                text = {
+                    Text("Are you sure want to delete this landmark? ")
+                },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            deleteItemAndCloseDialog()
+                        }, colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red)
+                    ) {
+                        Text("Delete", color = Color.White)
+                    }
+                },
+                dismissButton = {
+                    Button(
+
+                        onClick = {
+                            closeDialog()
+                        }, colors = ButtonDefaults.buttonColors(backgroundColor = Color.Gray)
+                    ) {
+                        Text("Cancel")
+                    }
+                }
+            )
+        }
+    }
+}
+
+fun <T> SnapshotStateList<T>.swapList(newList: List<T>) {
+    clear()
+    addAll(newList)
 }
 
 

@@ -8,7 +8,6 @@ import android.util.Log
 import android.util.SparseArray
 import com.canbazdev.hmskitsproject1.domain.model.landmark.Post
 import com.canbazdev.hmskitsproject1.domain.model.login.UserFirebase
-import com.canbazdev.hmskitsproject1.domain.repository.PostsRepository
 import com.canbazdev.hmskitsproject1.domain.source.RemoteDataSource
 import com.canbazdev.hmskitsproject1.util.Work
 import com.google.firebase.firestore.CollectionReference
@@ -70,9 +69,16 @@ class RemoteDataSourceImpl @Inject constructor(
     override fun signInWithHuawei(): AccountAuthService {
         val work = Work<AccountAuthService>()
         val authParam = AccountAuthParamsHelper(AccountAuthParams.DEFAULT_AUTH_REQUEST_PARAM)
+            .setEmail()
+            .setUid()
+            .setId()
             .setIdToken()
             .createParams()
-        work.onSuccess(AccountAuthManager.getService(context, authParam))
+        val x = AccountAuthManager.getService(context, authParam)
+        x.silentSignIn().addOnSuccessListener {
+            println(it.idToken)
+        }
+        work.onSuccess(x)
 
         return AccountAuthManager.getService(context, authParam)
 
@@ -129,14 +135,36 @@ class RemoteDataSourceImpl @Inject constructor(
     override fun insertUserToFirebase(userFirebase: UserFirebase): Work<UserFirebase> {
 
         val work = Work<UserFirebase>()
-        val task = firebase.collection("users").document().set(userFirebase)
+        val task = firebase.collection("users").document(userFirebase.id).set(userFirebase)
+        val task2 =
+            firebase.collection("users").document(userFirebase.id).collection("wishList").add("")
 
-        task.addOnSuccessListener {
-            work.onSuccess(userFirebase)
+        firebase.collection("users").get().addOnSuccessListener {
+            if (!it.isEmpty) {
+                val documents = it.documents
+                var isUserExist = false
+                for (doc in documents) {
+                    val id = doc.data?.get("id")?.let { p -> p as String }
+                    val email = doc.data?.get("email")?.let { p -> p as String }
+                    if (email?.equals(userFirebase.email) == true && id?.equals(userFirebase.id) == true) {
+                        isUserExist = true
+                    }
+                }
+                if (!isUserExist) {
+                    task.addOnSuccessListener {
+                        task2.addOnSuccessListener {
+                            work.onSuccess(userFirebase)
 
-        }.addOnFailureListener {
-            work.onFailure(it)
+                        }
 
+                    }.addOnFailureListener { e ->
+                        work.onFailure(e)
+
+                    }
+                }
+
+
+            }
         }
         return work
 
@@ -347,8 +375,8 @@ class RemoteDataSourceImpl @Inject constructor(
 
     override fun insertLandmarkToWishList(id: String, post: Post): Work<Post> {
         val work = Work<Post>()
-
-        firebase.collection("users").document(id).collection("wishList").add(post)
+        firebase.collection("users").document(id).collection("wishList")
+            .document(post.id ?: UUID.randomUUID().toString()).set(post)
             .addOnSuccessListener {
                 work.onSuccess(post)
 
@@ -392,11 +420,27 @@ class RemoteDataSourceImpl @Inject constructor(
                         println(d.data?.get("landmarkImage"))
                     }
                     work.onSuccess(postsList)
+                } else {
+                    work.onSuccess(listOf())
                 }
 
             }
             .addOnFailureListener {
                 work.onFailure(it)
+            }
+        return work
+    }
+
+    override fun deleteLandmarkFromWishList(userId: String, landmarkId: String): Work<String> {
+        val work = Work<String>()
+        firebase.collection("users").document(userId).collection("wishList").document(landmarkId)
+            .delete()
+            .addOnSuccessListener {
+                work.onSuccess(landmarkId)
+
+            }.addOnFailureListener {
+                work.onFailure(it)
+
             }
         return work
     }

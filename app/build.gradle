@@ -244,5 +244,9 @@ dependencies {
     // Awareness Kit
     implementation 'com.huawei.hms:awareness:3.1.0.302'
 
+    // Toasty
+    implementation 'com.github.GrenderG:Toasty:1.5.2'
+
+
 
 }

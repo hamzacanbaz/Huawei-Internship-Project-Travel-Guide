@@ -44,7 +44,7 @@ class LoginRepositoryImpl @Inject constructor(
         onFail: ((e: Exception) -> Unit)?
     ) {
         val authParams: AccountAuthParams =
-            AccountAuthParamsHelper(AccountAuthParams.DEFAULT_AUTH_REQUEST_PARAM).createParams()
+            AccountAuthParamsHelper(AccountAuthParams.DEFAULT_AUTH_REQUEST_PARAM).setIdToken().createParams()
         val service: AccountAuthService = AccountAuthManager.getService(context, authParams)
         val task: Task<AuthAccount> = service.silentSignIn()
         task.addOnSuccessListener {

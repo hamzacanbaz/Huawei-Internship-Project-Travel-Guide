@@ -51,9 +51,6 @@ class LandmarkDetailFragment :
             }
 
         }
-
-
-
         super.onViewCreated(view, savedInstanceState)
     }
 
