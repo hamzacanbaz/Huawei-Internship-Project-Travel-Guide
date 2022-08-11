@@ -10,8 +10,8 @@ import com.canbazdev.hmskitsproject1.R
 import com.canbazdev.hmskitsproject1.databinding.FragmentRegisterBinding
 import com.canbazdev.hmskitsproject1.domain.model.login.UserFirebase
 import com.canbazdev.hmskitsproject1.presentation.base.BaseFragment
+import com.huawei.hms.analytics.HiAnalytics
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 
 
 @AndroidEntryPoint
@@ -38,6 +38,9 @@ class RegisterFragment : BaseFragment<FragmentRegisterBinding>(R.layout.fragment
                 "Okay",
                 "Verification Code has sent to ${viewModel.userEmail.value}"
             )
+            val bundle = Bundle()
+            bundle.putString("email", viewModel.userEmail.value)
+            HiAnalytics.getInstance(context).onEvent("SendActivationCode", bundle)
         }
 
         super.onViewCreated(view, savedInstanceState)
@@ -52,6 +55,10 @@ class RegisterFragment : BaseFragment<FragmentRegisterBinding>(R.layout.fragment
                         "userInfo",
                         UserFirebase(id = viewModel.userId.value, email = viewModel.userEmail.value)
                     )
+                    val eventBundle = Bundle()
+                    eventBundle.putString("\$AcountType", "email")
+                    eventBundle.putString("\$RegistMethod", "email")
+                    HiAnalytics.getInstance(context).onEvent("\$RegisterAccount", eventBundle)
                     findNavController().navigate(
                         R.id.action_registerFragment_to_homeFragment,
                         bundle

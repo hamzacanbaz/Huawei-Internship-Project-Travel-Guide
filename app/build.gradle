@@ -247,6 +247,13 @@ dependencies {
     // Toasty
     implementation 'com.github.GrenderG:Toasty:1.5.2'
 
+    // Analytics Kit
+    implementation 'com.huawei.hms:hianalytics:6.3.0.302'
+
+    // Splash Screen
+    implementation 'androidx.core:core-splashscreen:1.0.0'
+
+
 
 
 }

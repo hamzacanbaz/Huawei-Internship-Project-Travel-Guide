@@ -1,6 +1,7 @@
 package com.canbazdev.hmskitsproject1.presentation.detail_post
 
 import android.app.Application
+import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
@@ -8,7 +9,6 @@ import androidx.lifecycle.viewModelScope
 import com.canbazdev.hmskitsproject1.data.repository.DataStoreRepository
 import com.canbazdev.hmskitsproject1.domain.model.landmark.Post
 import com.canbazdev.hmskitsproject1.domain.usecase.location.GetNearbySitesUseCase
-import com.canbazdev.hmskitsproject1.domain.usecase.login.InsertUserToFirebaseUseCase
 import com.canbazdev.hmskitsproject1.domain.usecase.posts.GetLandmarkWithIdUseCase
 import com.canbazdev.hmskitsproject1.domain.usecase.posts.GetWishListFromFirebaseUseCase
 import com.canbazdev.hmskitsproject1.domain.usecase.posts.InsertLandmarkToWishListUseCase
@@ -30,7 +30,6 @@ import javax.inject.Inject
 class LandmarkDetailViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val getNearbySitesUseCase: GetNearbySitesUseCase,
-    private val insertUserToFirebaseUseCase: InsertUserToFirebaseUseCase,
     private val getLandmarkWithIdUseCase: GetLandmarkWithIdUseCase,
     private val insertLandmarkToWishListUseCase: InsertLandmarkToWishListUseCase,
     private val getWishListUseCase: GetWishListFromFirebaseUseCase,
@@ -44,7 +43,7 @@ class LandmarkDetailViewModel @Inject constructor(
     private val _actionState = MutableStateFlow<ActionState?>(null)
     val actionState: StateFlow<ActionState?> = _actionState
 
-    lateinit var currentUserId: String
+    private lateinit var currentUserId: String
 
 
     init {
@@ -77,8 +76,14 @@ class LandmarkDetailViewModel @Inject constructor(
                             }
 
                         }
-                        is Resource.Loading -> {}
-                        is Resource.Error -> println("DETAIL ERROR")
+                        is Resource.Loading -> Log.i(
+                            "Get Landmark Detail",
+                            "Loading"
+                        )
+                        is Resource.Error -> Log.i(
+                            "Get Landmark Detail",
+                            "Error -> ${result.errorMessage.toString()}"
+                        )
                     }
                 }
             }
@@ -94,30 +99,43 @@ class LandmarkDetailViewModel @Inject constructor(
                     }
                 }?.collect { resource ->
                     when (resource) {
-                        is Resource.Success -> println("successssss" + resource.data?.size)
-                        is Resource.Error -> println("erollllllll" + resource.errorMessage)
-                        is Resource.Loading -> println("loaddddd")
+                        is Resource.Success -> Log.i(
+                            "Get Nearby Places",
+                            "success -> " + resource.data?.size
+                        )
+                        is Resource.Error -> Log.i(
+                            "Get Nearby Places",
+                            "error -> " + resource.errorMessage
+                        )
+
+                        is Resource.Loading -> Log.i(
+                            "Get Nearby Places",
+                            "loading"
+                        )
+
                     }
                 }
         }
     }
 
-    // TODO UID KISMINI DEGISTIR
     private fun insertLandmarkToWishList() {
         viewModelScope.launch {
-            println("WISH LISH $currentUserId ${landmark.value}")
+            Log.i("Get Wish List", "$currentUserId ${landmark.value}")
             insertLandmarkToWishListUseCase.invoke(
                 currentUserId,
                 landmark.value
             ).collect { result ->
                 when (result) {
-                    is Resource.Loading -> println("wish list loading")
+                    is Resource.Loading -> Log.i("Upload Landmark to To-Go List", "Loading")
                     is Resource.Success -> {
                         Toasty.success(getApplication(), "Added to To-Go List", Toast.LENGTH_SHORT)
                             .show()
-                        println("wish list success")
+                        Log.i("Upload Landmark to To-Go List", "Success")
                     }
-                    is Resource.Error -> println("wish list error : ${result.errorMessage.toString()}")
+                    is Resource.Error -> Log.i(
+                        "Upload Landmark to To-Go List",
+                        "Error -> ${result.errorMessage.toString()}"
+                    )
                 }
             }
         }
@@ -127,11 +145,14 @@ class LandmarkDetailViewModel @Inject constructor(
         viewModelScope.launch {
             getWishListUseCase.invoke(currentUserId)
                 .collect { result ->
-                    println("WISH")
                     when (result) {
-                        is Resource.Loading -> println("wish loading")
+                        is Resource.Loading -> Log.i(
+                            "Check Landmark Added Before",
+                            "Loading"
+                        )
+
                         is Resource.Success -> {
-                            if (result.data != null ) {
+                            if (result.data != null) {
                                 var isAddedBefore = false
                                 for (post in result.data) {
                                     if (landmark.value == post) {
@@ -146,9 +167,16 @@ class LandmarkDetailViewModel @Inject constructor(
                                 )
                                     .show()
                             }
-                            println("wish success ${result.data}")
+                            Log.i(
+                                "Check Landmark Added Before",
+                                "Success"
+                            )
+
                         }
-                        is Resource.Error -> println("wish error ${result.errorMessage}")
+                        is Resource.Error -> Log.i(
+                            "Check Landmark Added Before",
+                            "Error -> ${result.errorMessage.toString()}"
+                        )
                     }
                 }
 

@@ -4,7 +4,6 @@ import android.net.Uri
 import com.canbazdev.hmskitsproject1.domain.model.landmark.Post
 import com.canbazdev.hmskitsproject1.domain.repository.PostsRepository
 import com.canbazdev.hmskitsproject1.domain.source.RemoteDataSource
-import com.google.firebase.firestore.FirebaseFirestore
 import javax.inject.Inject
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
@@ -13,7 +12,6 @@ import kotlin.coroutines.suspendCoroutine
 *   Created by hamzacanbaz on 7/21/2022
 */
 class PostsRepositoryImpl @Inject constructor(
-    private val firebase: FirebaseFirestore,
     private val remoteDataSource: RemoteDataSource
 
 ) : PostsRepository {
@@ -119,20 +117,6 @@ class PostsRepositoryImpl @Inject constructor(
         }
     }
 
-
-    /* private fun callUserEnd(
-         work: Work<Post>,
-         post: Post
-     ) {
-         postsRef.document().set(post)
-             .addOnSuccessListener {
-                 work.onSuccess(post)
-             }.addOnFailureListener {
-                 work.onFailure(
-                     it
-                 )
-             }
-     }*/
 }
 
 

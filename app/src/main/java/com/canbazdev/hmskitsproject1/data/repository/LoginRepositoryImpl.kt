@@ -4,8 +4,6 @@ import android.content.Context
 import com.canbazdev.hmskitsproject1.domain.model.login.UserFirebase
 import com.canbazdev.hmskitsproject1.domain.repository.LoginRepository
 import com.canbazdev.hmskitsproject1.domain.source.RemoteDataSource
-import com.canbazdev.hmskitsproject1.util.Work
-import com.google.firebase.firestore.FirebaseFirestore
 import com.huawei.hmf.tasks.Task
 import com.huawei.hms.common.ApiException
 import com.huawei.hms.support.account.AccountAuthManager
@@ -31,29 +29,21 @@ class LoginRepositoryImpl @Inject constructor(
         }
     }
 
-    /* override fun signInWithHuawei(): AccountAuthService {
-         println("xxxx")
-         val authParam = AccountAuthParamsHelper(AccountAuthParams.DEFAULT_AUTH_REQUEST_PARAM)
-             .setIdToken()
-             .createParams()
-         return AccountAuthManager.getService(context, authParam)
-     }*/
 
     override fun silentSignIn(
         onSuccess: (() -> Unit)?,
         onFail: ((e: Exception) -> Unit)?
     ) {
         val authParams: AccountAuthParams =
-            AccountAuthParamsHelper(AccountAuthParams.DEFAULT_AUTH_REQUEST_PARAM).setIdToken().createParams()
+            AccountAuthParamsHelper(AccountAuthParams.DEFAULT_AUTH_REQUEST_PARAM).setIdToken()
+                .createParams()
         val service: AccountAuthService = AccountAuthManager.getService(context, authParams)
         val task: Task<AuthAccount> = service.silentSignIn()
         task.addOnSuccessListener {
-            println(it.idToken)
             onSuccess?.invoke()
         }
         task.addOnFailureListener { e ->
             if (e is ApiException) {
-                println(e)
                 onFail?.invoke(e)
             }
 
@@ -65,10 +55,8 @@ class LoginRepositoryImpl @Inject constructor(
         return suspendCoroutine { continuation ->
             remoteDataSource.signOutWithHuawei()
                 .addOnSuccessListener {
-                    println("yar")
                     continuation.resumeWith(Result.success(1))
                 }.addOnFailureListener {
-                    println("dım")
                     continuation.resumeWithException(it)
                 }
         }
@@ -124,20 +112,4 @@ class LoginRepositoryImpl @Inject constructor(
         }
     }
 
-    /*  override suspend fun signOut(onSuccess: (() -> Unit)?, onFail: ((e: Exception) -> Unit)?) {
-        val authParams: AccountAuthParams =
-            AccountAuthParamsHelper(AccountAuthParams.DEFAULT_AUTH_REQUEST_PARAM).createParams()
-        val service: AccountAuthService = AccountAuthManager.getService(context, authParams)
-        val task = service.signOut()
-        task.addOnSuccessListener {
-            onSuccess?.invoke()
-        }
-        task.addOnFailureListener { e ->
-            if (e is ApiException) {
-                println(e)
-                onFail?.invoke(e)
-            }
-
-        }
-    }*/
 }

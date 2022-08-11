@@ -10,7 +10,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -105,7 +104,7 @@ fun GetProfileScreen(profileViewModel: ProfileViewModel) {
                         modifier = Modifier.padding(0.dp, 12.dp, 0.dp, 12.dp)
                     ) {
                         if (it < currentLandmarks.size) {
-                            currentLandmarks[it].landmarkImage?.let { image ->
+                            currentLandmarks[it].landmarkImage?.let { _ ->
                                 GridImage(landmark = currentLandmarks[it], selectedLandmark = {
                                     if (selectedSharedOrToGo == 1) {
                                         alertDialogOpened = true
@@ -159,9 +158,11 @@ fun LogoutButton(viewModel: ProfileViewModel) {
         },
         modifier = Modifier
             .fillMaxWidth()
-            .padding(36.dp, 12.dp)
+            .padding(36.dp, 12.dp),
+        colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFF48FB1))
+
     ) {
-        Text(text = "Log Out")
+        Text(text = "Log Out", color = Color.White)
     }
 }
 
@@ -297,17 +298,12 @@ fun AlertDialog(
                             closeDialog()
                         }, colors = ButtonDefaults.buttonColors(backgroundColor = Color.Gray)
                     ) {
-                        Text("Cancel")
+                        Text("Cancel", color = Color.White)
                     }
                 }
             )
         }
     }
-}
-
-fun <T> SnapshotStateList<T>.swapList(newList: List<T>) {
-    clear()
-    addAll(newList)
 }
 
 

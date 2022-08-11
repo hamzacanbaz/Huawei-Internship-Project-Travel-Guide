@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.canbazdev.hmskitsproject1.databinding.ItemPostBinding
 import com.canbazdev.hmskitsproject1.domain.model.landmark.Post
@@ -14,7 +13,7 @@ import com.canbazdev.hmskitsproject1.domain.model.landmark.Post
 */
 class PostsAdapter(
     private val listener: OnItemClickedListener?
-) : RecyclerView.Adapter< PostsAdapter.PostsViewHolder>() {
+) : RecyclerView.Adapter<PostsAdapter.PostsViewHolder>() {
 
     private var postsList = ArrayList<Post>()
 
@@ -35,7 +34,6 @@ class PostsAdapter(
 
 
         override fun bind(item: Post) {
-            println("binded")
             binding.post = item
         }
 
@@ -54,7 +52,6 @@ class PostsAdapter(
     ): PostsViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val binding = ItemPostBinding.inflate(inflater, parent, false)
-        println("on create viewholder")
         return PostsViewHolder(binding)
     }
 
@@ -64,9 +61,9 @@ class PostsAdapter(
     }
 
     override fun onBindViewHolder(holder: PostsViewHolder, position: Int) {
-        postsList.get(position)?.let {
-            println("on bind")
-            holder.bind(it) }
+        postsList[position].let {
+            holder.bind(it)
+        }
 
     }
 
@@ -74,16 +71,6 @@ class PostsAdapter(
         fun onItemClicked(position: Int, post: Post)
     }
 
-    class DiffUtilCallBack : DiffUtil.ItemCallback<Post>() {
-        override fun areItemsTheSame(oldItem: Post, newItem: Post): Boolean {
-            return oldItem.id == newItem.id
-        }
-
-        override fun areContentsTheSame(oldItem: Post, newItem: Post): Boolean {
-            return oldItem == newItem
-        }
-
-    }
 
     override fun getItemCount(): Int {
         return postsList.size

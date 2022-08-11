@@ -3,6 +3,7 @@ package com.canbazdev.hmskitsproject1.presentation.post
 import android.app.Activity
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
@@ -35,13 +36,9 @@ class PostFragment : BaseFragment<FragmentPostBinding>(R.layout.fragment_post),
         binding.viewmodel = viewModel
         observe()
 
-
         binding.tvRecognizeLandmark.setOnClickListener {
             viewModel.recognizeLandmark()
         }
-
-        // TODO UI state -1 gelirse dialog göster ve konumu açmasını veya hms core'u kontrol etmesini iste
-        //  ui_state değişmezse sıçtın, değişirse dialog kaldır. Tamama basınca viewModel.checkLocationOptions() çalışsın
 
 
         binding.ivImage.setOnClickListener {
@@ -71,35 +68,6 @@ class PostFragment : BaseFragment<FragmentPostBinding>(R.layout.fragment_post),
                 }
             }
         }
-
-        /* val mLocationCallback: LocationCallback
-         mLocationCallback = object : LocationCallback() {
-             override fun onLocationResult(locationResult: LocationResult) {
-
-                 println("LAT" + locationResult.locations[0].latitude)
-                 println("LONG" + locationResult.locations[0].longitude)
-
-                 viewModel.convertLatLangToAddress(
-                     locationResult.locations[0].latitude,
-                     locationResult.locations[0].longitude
-                 )
-
-             }
-         }
-
-         fusedLocationProviderClient.requestLocationUpdates(
-             mLocationRequest,
-             mLocationCallback,
-             Looper.getMainLooper()
-         )
-             .addOnSuccessListener {
-
-             }
-             .addOnFailureListener {
-                 println("failure")
-             }*/
-
-
     }
 
 
@@ -113,13 +81,18 @@ class PostFragment : BaseFragment<FragmentPostBinding>(R.layout.fragment_post),
                 }
             }
         }
-        // TODO HATA VARSA DIALOG GOSTER VE BELKI ILERIDE HATA TURU (LOCATION HMS) SOYLENEBILIR
         lifecycleScope.launchWhenCreated {
             viewModel.checkLocationOptions.collect { state ->
                 when (state) {
-                    is Resource.Loading -> println("Locations loading")
-                    is Resource.Error -> println("Locations" + state.errorMessage)
-                    is Resource.Success -> println("Locations Success")
+                    is Resource.Loading -> Log.i("Check Location Options", "Loading")
+                    is Resource.Error -> Log.i(
+                        "Check Location Options",
+                        "Error -> ${state.errorMessage.toString()}"
+                    )
+                    is Resource.Success -> Log.i(
+                        "Check Location Options",
+                        "Success -> ${state.data}"
+                    )
                 }
             }
         }
@@ -198,7 +171,6 @@ class PostFragment : BaseFragment<FragmentPostBinding>(R.layout.fragment_post),
 
     private fun navigateToHomeFragment() {
         if (findNavController().currentDestination?.id == R.id.postFragment) {
-            println("navigate to home")
             findNavController().navigate(R.id.action_postFragment_to_homeFragment)
         }
     }

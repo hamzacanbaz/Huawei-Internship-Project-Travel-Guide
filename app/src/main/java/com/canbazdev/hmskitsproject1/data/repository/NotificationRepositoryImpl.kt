@@ -1,5 +1,6 @@
 package com.canbazdev.hmskitsproject1.data.repository
 
+import android.util.Log
 import com.canbazdev.hmskitsproject1.data.model.AccessTokenModel
 import com.canbazdev.hmskitsproject1.data.model.NotificationMessageBody
 import com.canbazdev.hmskitsproject1.data.model.NotificationServiceResponse
@@ -34,11 +35,11 @@ class NotificationRepositoryImpl @Inject constructor(
                     call: Call<NotificationServiceResponse>,
                     response: Response<NotificationServiceResponse>
                 ) {
-                    println("yeter be " + response.body())
+                    println("congrats " + response.body())
                 }
 
                 override fun onFailure(call: Call<NotificationServiceResponse>, t: Throwable) {
-                    println("ohhhh")
+                    println("error")
                 }
 
             })
@@ -46,7 +47,6 @@ class NotificationRepositoryImpl @Inject constructor(
     }
 
     override fun getAccessToken(pushToken: String): String {
-        println("nerelere geldik")
         var token = ""
         accessTokenService.createAccessToken(
             "client_credentials",
@@ -58,17 +58,16 @@ class NotificationRepositoryImpl @Inject constructor(
                     call: Call<AccessTokenModel>,
                     response: Response<AccessTokenModel>
                 ) {
-                    println("of gelemedik")
                     if (response.isSuccessful) {
                         token = response.body()?.access_token ?: ""
                         postNotification(token, pushToken)
                     } else {
-                        println(response)
+                        Log.i("Notification", response.message())
                     }
                 }
 
                 override fun onFailure(call: Call<AccessTokenModel>, t: Throwable) {
-                    println("ohhhhhhhhhhhhhhh")
+                    Log.e("Notification", t.message.toString())
                 }
 
             }

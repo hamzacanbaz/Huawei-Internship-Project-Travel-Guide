@@ -215,22 +215,22 @@ class MapFragment : BaseFragment<FragmentMapBinding>(R.layout.fragment_map), OnM
 
     override fun onStart() {
         super.onStart()
-        mMapView?.onStart();
+        mMapView?.onStart()
     }
 
     override fun onStop() {
         super.onStop()
-        mMapView?.onStop();
+        mMapView?.onStop()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        mMapView?.onDestroy();
+        mMapView?.onDestroy()
     }
 
     override fun onPause() {
         super.onPause()
-        mMapView?.onPause();
+        mMapView?.onPause()
     }
 
     override fun onResume() {

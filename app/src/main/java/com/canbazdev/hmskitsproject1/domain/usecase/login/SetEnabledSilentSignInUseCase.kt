@@ -1,7 +1,6 @@
 package com.canbazdev.hmskitsproject1.domain.usecase.login
 
 import com.canbazdev.hmskitsproject1.data.repository.DataStoreRepository
-import java.io.IOException
 import javax.inject.Inject
 
 /*
@@ -10,7 +9,7 @@ import javax.inject.Inject
 class SetEnabledSilentSignInUseCase @Inject constructor(
     private val dataStoreRepository: DataStoreRepository
 ) {
-    suspend operator fun invoke(isEnabled:Boolean) {
+    suspend operator fun invoke(isEnabled: Boolean) {
         dataStoreRepository.setSilentSignInEnabled(isEnabled)
     }
 }

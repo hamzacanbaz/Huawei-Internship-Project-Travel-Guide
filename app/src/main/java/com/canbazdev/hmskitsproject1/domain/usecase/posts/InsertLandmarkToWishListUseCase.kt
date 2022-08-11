@@ -21,7 +21,6 @@ class InsertLandmarkToWishListUseCase @Inject constructor(
             emit(Resource.Error(errorMessage = e.localizedMessage ?: e.message!!))
         }
 
-
     }
 
 }

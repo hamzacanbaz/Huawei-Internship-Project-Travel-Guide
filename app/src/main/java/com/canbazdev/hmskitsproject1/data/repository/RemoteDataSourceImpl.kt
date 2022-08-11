@@ -76,7 +76,7 @@ class RemoteDataSourceImpl @Inject constructor(
             .createParams()
         val x = AccountAuthManager.getService(context, authParam)
         x.silentSignIn().addOnSuccessListener {
-            println(it.idToken)
+            Log.e("Remote Data Source", "id token: ${it.idToken}")
         }
         work.onSuccess(x)
 
@@ -162,8 +162,6 @@ class RemoteDataSourceImpl @Inject constructor(
 
                     }
                 }
-
-
             }
         }
         return work
@@ -172,7 +170,6 @@ class RemoteDataSourceImpl @Inject constructor(
 
     override fun insertPost(post: Post): Work<Post> {
         val work = Work<Post>()
-        println(postsRef)
         postsRef.document().set(post).addOnSuccessListener {
             work.onSuccess(post)
 
@@ -241,7 +238,6 @@ class RemoteDataSourceImpl @Inject constructor(
 
                         )
                     )
-                    println(d.data?.get("landmarkImage"))
                 }
                 work.onSuccess(postsList)
             }
@@ -251,10 +247,6 @@ class RemoteDataSourceImpl @Inject constructor(
 
     override fun getNearbySites(lat: Double, lng: Double): Work<List<Site>> {
         val work = Work<List<Site>>()
-        // Instantiate the SearchService object.
-
-
-// Create a request body.
         val request = NearbySearchRequest()
         val location = Coordinate(lat, lng)
         request.apply {
@@ -264,7 +256,7 @@ class RemoteDataSourceImpl @Inject constructor(
             pageSize = 20
             pageIndex = 1
         }
-// Create a search result listener.
+
         val resultListener: SearchResultListener<NearbySearchResponse> =
             object : SearchResultListener<NearbySearchResponse> {
                 // Return search results upon a successful search.
@@ -282,13 +274,11 @@ class RemoteDataSourceImpl @Inject constructor(
                     work.onSuccess(sites)
                 }
 
-                // Return the result code and description upon a search exception.
                 override fun onSearchError(status: SearchStatus) {
                     work.onFailure(Exception(status.errorMessage))
                     Log.i("TAG", "Error : ${status.errorCode}  ${status.errorMessage}")
                 }
             }
-// Call the nearby place search API.
         searchService.nearbySearch(request, resultListener)
         return work
 
@@ -325,7 +315,6 @@ class RemoteDataSourceImpl @Inject constructor(
                         )
 
                     }
-                    println(d.data?.get("landmarkImage"))
                 }
                 work.onSuccess(postsList)
             }
@@ -415,9 +404,6 @@ class RemoteDataSourceImpl @Inject constructor(
 
                             )
                         )
-
-
-                        println(d.data?.get("landmarkImage"))
                     }
                     work.onSuccess(postsList)
                 } else {
@@ -511,7 +497,7 @@ class RemoteDataSourceImpl @Inject constructor(
         try {
             analyzer.stop()
         } catch (e: IOException) {
-            println("analyzer stop error ${e.localizedMessage}")
+            Log.e("Remote Data Source", "analyzer stop error ${e.localizedMessage}")
         }
         return work
     }

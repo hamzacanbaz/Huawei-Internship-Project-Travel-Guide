@@ -2,7 +2,6 @@ package com.canbazdev.hmskitsproject1.domain.repository
 
 import android.net.Uri
 import com.canbazdev.hmskitsproject1.domain.model.landmark.Post
-import com.canbazdev.hmskitsproject1.util.Work
 
 /*
 *   Created by hamzacanbaz on 7/21/2022
@@ -16,6 +15,6 @@ interface PostsRepository {
     suspend fun getLandmarkWithId(id: String): Post
     suspend fun uploadLandmarkToWishList(id: String, post: Post): Post
     suspend fun getAllWishListFromFirebase(id: String): List<Post>
-    suspend fun deleteLandmarkFromWishList(userId: String,landmarkId: String): String
+    suspend fun deleteLandmarkFromWishList(userId: String, landmarkId: String): String
 
 }

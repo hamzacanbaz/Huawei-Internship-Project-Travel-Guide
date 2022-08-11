@@ -2,7 +2,6 @@ package com.canbazdev.hmskitsproject1.domain.usecase.location
 
 import android.graphics.Bitmap
 import com.canbazdev.hmskitsproject1.domain.repository.LocationRepository
-import com.canbazdev.hmskitsproject1.domain.source.RemoteDataSource
 import com.canbazdev.hmskitsproject1.util.Resource
 import com.huawei.hms.mlsdk.landmark.MLRemoteLandmark
 import kotlinx.coroutines.flow.Flow

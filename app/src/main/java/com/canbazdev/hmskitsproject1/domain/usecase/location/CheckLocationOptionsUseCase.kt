@@ -1,7 +1,6 @@
 package com.canbazdev.hmskitsproject1.domain.usecase.location
 
 import com.canbazdev.hmskitsproject1.domain.repository.LocationRepository
-import com.canbazdev.hmskitsproject1.domain.source.RemoteDataSource
 import com.canbazdev.hmskitsproject1.util.Resource
 import com.huawei.hms.location.LocationSettingsResponse
 import kotlinx.coroutines.flow.Flow

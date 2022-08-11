@@ -56,7 +56,6 @@ class ProfileViewModel @Inject constructor(
 
 
     init {
-        println("SABRINA viewmodel init")
         updateUserInfo()
         getPosts()
         getWishListPosts()
@@ -75,7 +74,6 @@ class ProfileViewModel @Inject constructor(
     private fun updateUserInfo() {
         viewModelScope.launch {
             dataStoreRepository.getCurrentUserId.collect {
-                println(it)
                 _userId.value = it
             }
 

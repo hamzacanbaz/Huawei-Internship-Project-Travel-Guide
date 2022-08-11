@@ -40,11 +40,9 @@ object RepositoryModule {
 
     @Provides
     fun providePostsRepository(
-        postsRef: CollectionReference,
-        db: FirebaseFirestore,
         remoteDataSource: RemoteDataSource
     ): PostsRepository {
-        return PostsRepositoryImpl(db, remoteDataSource)
+        return PostsRepositoryImpl(remoteDataSource)
     }
 
     @Provides

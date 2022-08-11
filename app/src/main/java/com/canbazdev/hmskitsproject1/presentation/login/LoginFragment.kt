@@ -10,7 +10,6 @@ import com.canbazdev.hmskitsproject1.databinding.FragmentLoginBinding
 import com.canbazdev.hmskitsproject1.domain.model.login.UserFirebase
 import com.canbazdev.hmskitsproject1.presentation.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 
 @AndroidEntryPoint
 class LoginFragment : BaseFragment<FragmentLoginBinding>(R.layout.fragment_login) {
@@ -31,8 +30,6 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(R.layout.fragment_login
             viewModel.uiState.collect {
                 println("ui state $it")
             }
-
-
         }
 
         binding.tvNoAccountButton.setOnClickListener {

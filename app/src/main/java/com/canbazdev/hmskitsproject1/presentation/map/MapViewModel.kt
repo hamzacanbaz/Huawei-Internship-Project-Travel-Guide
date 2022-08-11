@@ -1,5 +1,6 @@
 package com.canbazdev.hmskitsproject1.presentation.map
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.canbazdev.hmskitsproject1.domain.model.landmark.NearbyLandmark
@@ -28,8 +29,7 @@ class MapViewModel @Inject constructor(
 
     val latLng: MutableStateFlow<LatLng> = MutableStateFlow(LatLng(0.0, 0.0))
 
-    private val _nearbyLocationLatLng: MutableStateFlow<LatLng> = MutableStateFlow(LatLng(0.0, 0.0))
-    val nearbyLocationLatLng: StateFlow<LatLng> = _nearbyLocationLatLng
+    private val nearbyLocationLatLng: MutableStateFlow<LatLng> = MutableStateFlow(LatLng(0.0, 0.0))
 
     private val _clickedMarkerName: MutableStateFlow<String> = MutableStateFlow("")
     val clickedMarkerName: StateFlow<String> = _clickedMarkerName
@@ -52,34 +52,41 @@ class MapViewModel @Inject constructor(
             getAllPostsFromFirebaseUseCase.invoke().collect {
                 when (it) {
                     is Resource.Success -> {
-                        println("retrieving succes")
-                        println("xx ${it.data?.size}")
+                        Log.i("Map ViewModel", "Success -> " + "${it.data}")
                         _postsList.value = it.data ?: listOf()
                     }
-                    is Resource.Loading -> println("retrieving loading")
-                    is Resource.Error -> println("retrieving error")
+                    is Resource.Loading -> Log.i("Map ViewModel", "Loading")
+
+                    is Resource.Error -> Log.i(
+                        "Map ViewModel",
+                        "Error -> ${it.errorMessage.toString()}"
+                    )
                 }
             }
         }
     }
 
     fun setNearbyLocationTitle(location: LatLng) {
-        _nearbyLocationLatLng.value = location
+        nearbyLocationLatLng.value = location
         getNearbyLocations()
     }
 
-    fun getNearbyLocations() {
+    private fun getNearbyLocations() {
         viewModelScope.launch {
             getNearbySitesUseCase.invoke(
                 nearbyLocationLatLng.value.latitude,
                 nearbyLocationLatLng.value.longitude
             ).collect { result ->
                 when (result) {
-                    is Resource.Loading -> println("nearby locations loading")
+                    is Resource.Loading -> Log.i("Get Nearby Locations", "Loading")
                     is Resource.Success -> {
+                        Log.i("Get Nearby Locations", "Success -> ${result.data}")
                         _nearbyLandmarksList.value = result.data ?: listOf()
                     }
-                    is Resource.Error -> println("nearby locations error")
+                    is Resource.Error -> Log.i(
+                        "Get Nearby Locations",
+                        "Error -> ${result.errorMessage.toString()}"
+                    )
                 }
             }
         }

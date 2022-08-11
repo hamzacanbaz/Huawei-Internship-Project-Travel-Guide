@@ -2,6 +2,7 @@ package com.canbazdev.hmskitsproject1.presentation.home
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -10,7 +11,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.canbazdev.hmskitsproject1.R
 import com.canbazdev.hmskitsproject1.databinding.FragmentHomeBinding
@@ -82,7 +82,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home),
         binding.hwBannerView.loadAd(adParam)
         binding.hwBannerView.adListener = object : AdListener() {
             override fun onAdLoaded() {
-                println("Ad loaded")
+                Log.i(
+                    "Set Ad",
+                    "Ad Loaded"
+                )
+
                 super.onAdLoaded()
             }
         }
@@ -96,10 +100,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home),
         }
         if (requestCode == 120) {
             // Input an image for scanning and return the result.
-            var obj = data.getParcelableExtra(ScanUtil.RESULT) as HmsScan?
+            val obj = data.getParcelableExtra(ScanUtil.RESULT) as HmsScan?
             if (obj != null) {
-                // TODO BARKODA ID EKLE DETAIL'E ID GONDER ORADA FIREBASE'DEN CEKME ISLEMI YAP
-                println("OBJ ${obj.showResult}")
                 val bundle = Bundle()
                 bundle.putString("scanUuid", obj.showResult)
                 findNavController().navigate(
@@ -118,11 +120,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home),
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.title) {
-            /* OptionsMenu.LOGOUT.title -> {
-                 viewModel.clearUserInfo()
-                 AGConnectAuth.getInstance().signOut()
-                 viewModel.unableSilentSignIn()
-             }*/
             OptionsMenu.SCAN.title -> {
                 ScanUtil.startScan(
                     activity, 120, null

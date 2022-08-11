@@ -71,9 +71,6 @@ class PostViewModel @Inject constructor(
     private val _actionState = MutableStateFlow<ActionState?>(null)
     val actionState: StateFlow<ActionState?> = _actionState
 
-    private val _uiState = MutableStateFlow(0)
-    val uiState: StateFlow<Int> = _uiState
-
     private val _recognizeState = MutableStateFlow(-1)
     val recognizeState: StateFlow<Int> = _recognizeState
 
@@ -84,7 +81,7 @@ class PostViewModel @Inject constructor(
 
     private val postId = UUID.randomUUID().toString()
 
-    lateinit var currentUserId: String
+    private lateinit var currentUserId: String
 
 
     init {
@@ -112,11 +109,9 @@ class PostViewModel @Inject constructor(
     fun setPostImage(imageUri: Uri) {
         _post.value = post.value.copy(landmarkImage = convertUriToBitmap(imageUri).toString())
         _postImage.value = imageUri
-        println(isImageUploaded.value)
         _isImageUploaded.value = true
     }
 
-    // repository'den author id ve author name al bunları ekle
 
     private fun sharePost() {
         viewModelScope.launch {
@@ -126,21 +121,19 @@ class PostViewModel @Inject constructor(
             )
 
             insertPostUseCase.invoke(post).collect { result ->
-                println("vm collect")
                 when (result) {
                     is Resource.Loading -> {
                         _uploadState.value = 0
-                        println("vm Loading")
+                        Log.i("Share Landmark", "Loading")
                     }
                     is Resource.Error -> {
                         _uploadState.value = -2
-                        println("vm Error + ${result.errorMessage}")
+                        Log.e("Share Landmark", "Error -> ${result.errorMessage}")
                     }
                     is Resource.Success -> {
                         _uploadState.value = 1
-                        println("vm successsss" + result.data)
+                        Log.i("Share Landmark", "Success -> ${result.data}")
                         getToken()
-                        _uiState.value = 1
                         _actionState.value = ActionState.NavigateToHome
 
 
@@ -157,35 +150,36 @@ class PostViewModel @Inject constructor(
             insertPostImageToStorageUseCase.invoke(postImage.value).collect {
                 when (it) {
                     is Resource.Success -> {
-                        println("post success")
+                        Log.i("Upload Post Image To Storage", "Success -> ${it.data}")
                         post.value.landmarkImage = it.data.toString()
                         generateQrCode(postId)
 
                     }
                     is Resource.Error -> {
-                        println("post error")
+                        Log.e("Upload Post Image To Storage", "Error -> ${it.errorMessage}")
                         generateQrCode(postId)
                     }
-                    else -> {}
+                    else -> {
+                        Log.i("Upload Post Image To Storage", "Loading")
+                    }
                 }
             }
         }
     }
 
-    // TODO HATA OLURSA HATA MESAJI DONDUR
 
     fun recognizeLandmark() {
         viewModelScope.launch {
             recognizeLandmarkUseCase.invoke(convertUriToBitmap(postImage.value)).collect { result ->
                 when (result) {
                     is Resource.Loading -> {
+                        Log.i("Recognize Landmark", "Loading")
                         _recognizeState.value = 0
                     }
                     is Resource.Success -> {
-                        println("recognize success ${result.data}")
+                        Log.i("Recognize Landmark", "Success -> ${result.data}")
                         for (landmark in result.data!!) {
                             _post.value = post.value.copy(landmarkName = landmark.landmark)
-                            println("${landmark.landmark} -------- ${landmark.landmarkIdentity} --------")
                             for (c in landmark.positionInfos) {
                                 convertLatLangToAddress(c.lat, c.lng)
                                 _post.value = post.value.copy(landmarkLatitude = c.lat)
@@ -196,7 +190,7 @@ class PostViewModel @Inject constructor(
                     }
                     is Resource.Error -> {
                         _recognizeState.value = -2
-                        println("recognize error ${result.errorMessage}")
+                        Log.e("Recognize Landmark", "Error -> ${result.errorMessage}")
                     }
                 }
             }
@@ -221,7 +215,7 @@ class PostViewModel @Inject constructor(
         viewModelScope.launch {
             checkLocationOptionsUseCase.invoke().collect {
                 when (it) {
-                    // TODO SONUCA GORE UI STATE GUNCELLE
+
                     is Resource.Loading -> _checkLocationOptions.value = Resource.Loading()
                     is Resource.Success -> _checkLocationOptions.value = Resource.Success(true)
                     is Resource.Error -> _checkLocationOptions.value =
@@ -241,12 +235,10 @@ class PostViewModel @Inject constructor(
                 1
             )
             if (addresses != null && addresses.size > 0) {
-
                 Log.i(Constants.TAG, "addresses=" + addresses.size)
                 val address = addresses[0]
                 val landmarkAddress =
                     address.thoroughfare + ", " + address.postalCode + " " + address.subAdminArea + "/" + address.adminArea + ", " + address.countryName
-                println(landmarkAddress)
                 _post.value = post.value.copy(
                     landmarkLocation = landmarkAddress.replace("null", "").trim()
                 )
@@ -260,7 +252,6 @@ class PostViewModel @Inject constructor(
 
     fun setPushTokenFirst(token: String) {
         pushToken = token
-        println("PUSH $pushToken")
         sendNotificationUseCase.invoke(pushToken)
     }
 
@@ -275,7 +266,7 @@ class PostViewModel @Inject constructor(
 
                     if (!TextUtils.isEmpty(pushToken)) {
                         Log.i("PushActivity", "get token: $pushToken")
-                        setPushTokenFirst("$pushToken")
+                        setPushTokenFirst(pushToken)
                     }
                 } catch (e: Exception) {
                     Log.i("PushActivity", "getToken failed, $e")
@@ -288,7 +279,6 @@ class PostViewModel @Inject constructor(
     }
 
     private fun generateQrCode(content: String) {
-        println("generate qr code works")
         val type = HmsScan.QRCODE_SCAN_TYPE
         val width = 400
         val height = 400
@@ -304,7 +294,6 @@ class PostViewModel @Inject constructor(
     }
 
     private fun getImageUri(inContext: Context, inImage: Bitmap) {
-        println("get Image Uri  works")
         val bytes = ByteArrayOutputStream()
         inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
         val path = MediaStore.Images.Media.insertImage(
@@ -318,42 +307,24 @@ class PostViewModel @Inject constructor(
 
     private fun uploadLandmarkQrCodeToStorage(uri: Uri) {
         viewModelScope.launch {
-            println("upload qr code works")
             insertLandmarkQrCodeToStorageUseCase.invoke(uri, postId)
                 .collect { result ->
                     when (result) {
-                        is Resource.Loading -> println("qr loading")
+                        is Resource.Loading -> Log.i("Upload QR Code to Firebase", "Loading")
                         is Resource.Success -> {
                             post.value.qrUrl = result.data.toString()
-                            println("qr success")
+                            Log.i("Upload QR Code to Firebase", "Success -> ${result.data}")
                             sharePost()
                         }
-                        is Resource.Error -> println("qr error ${result.errorMessage}")
+                        is Resource.Error -> Log.i(
+                            "Upload QR Code to Firebase",
+                            "Error -> ${result.errorMessage}"
+                        )
                     }
                 }
 
         }
     }
-
-
-    /* fun imageToText(imageUri: Uri) {
-     val bitmap = convertUriToBitmap(imageUri)
-     val analyzer = MLAnalyzerFactory.getInstance().localTextAnalyzer
-     val frame = MLFrame.fromBitmap(bitmap)
-     val task = analyzer.asyncAnalyseFrame(frame)
-     task.addOnSuccessListener {
-         _postText.value = it.stringValue.toString().trim()
-
-     }.addOnFailureListener {
-         println(it.localizedMessage)
-     }
-
-     try {
-         analyzer?.stop()
-     } catch (e: IOException) {
-         // Exception handling.
-     }
- }*/
 
 
 }

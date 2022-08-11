@@ -8,7 +8,6 @@ import com.canbazdev.hmskitsproject1.domain.model.login.UserFirebase
 import com.canbazdev.hmskitsproject1.domain.usecase.login.*
 import com.canbazdev.hmskitsproject1.util.Resource
 import com.canbazdev.hmskitsproject1.util.SilentSignInStatus
-import com.huawei.hms.support.account.service.AccountAuthService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -29,22 +28,17 @@ class LoginViewModel @Inject constructor(
     application: Application
 ) :
     AndroidViewModel(application) {
-    private var _huaweiSignIn = MutableStateFlow<AccountAuthService?>(null)
-    val huaweiSignIn: StateFlow<AccountAuthService?>
-        get() = _huaweiSignIn
-
     private var _uiState = MutableStateFlow(0)
     val uiState: StateFlow<Int>
         get() = _uiState
 
-    private var _userName = MutableStateFlow("")
-    val userName: StateFlow<String> = _userName
+    private var userName = MutableStateFlow("")
 
     private var _userEmail = MutableStateFlow("")
     val userEmail: StateFlow<String> = _userEmail
 
     private var _userPassword = MutableStateFlow("")
-    val userPassword: StateFlow<String> = _userPassword
+    private val userPassword: StateFlow<String> = _userPassword
 
     private var _isUserSignedIn = MutableStateFlow(false)
     val isUserSignedIn: StateFlow<Boolean> = _isUserSignedIn
@@ -63,11 +57,10 @@ class LoginViewModel @Inject constructor(
             signInWithHuaweiIdUseCase.invoke().collect { result ->
                 when (result) {
                     is Resource.Success -> {
-                        _huaweiSignIn.value = result.data
                         result.data?.silentSignIn()?.addOnSuccessListener {
                             _userEmail.value = it.email
                             _userId.value = it.unionId
-                            _userName.value = it.displayName
+                            userName.value = it.displayName
                             insertUserToFirebase()
                             _isUserSignedIn.value = true
                         }
@@ -84,12 +77,9 @@ class LoginViewModel @Inject constructor(
 
     fun checkUserLogin() {
         viewModelScope.launch {
-            // TODO CHANGE THIS USE CASE
-            // TODO NOW, IT IS WORKING WRONG
             checkUserLoginUseCase.invoke(this).collect { status ->
                 when (status) {
                     SilentSignInStatus.SUCCESS -> {
-                        //signInWithHuawei()
                         _uiState.value = 1
                     }
                     SilentSignInStatus.FAIL -> _uiState.value = -1
@@ -140,18 +130,6 @@ class LoginViewModel @Inject constructor(
             }
         }
     }
-
-
-    /* fun signOutHuawei() {
-
-         viewModelScope.launch {
-             loginRepository.signOut(onSuccess = {
-                 setSilentSigninEnabled(false)
-                 _uiState.value = -1
-                 println(huaweiSignIn.value)
-             }, onFail = { _uiState.value = 1 })
-         }
-     }*/
 
 
     fun signOutHuawei() {

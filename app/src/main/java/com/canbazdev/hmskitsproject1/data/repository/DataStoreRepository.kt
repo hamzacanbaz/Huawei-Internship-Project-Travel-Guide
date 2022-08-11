@@ -21,7 +21,6 @@ val Context.dataStore: DataStore<Preferences> by preferencesDataStore("USER_PREF
 @Singleton
 class DataStoreRepository @Inject constructor(@ApplicationContext val context: Context) {
 
-    private val isOpenedFirstTime = booleanPreferencesKey("IS_OPENED_FIRST_TIME")
     private val silentSignInEnabled = booleanPreferencesKey("SILENT_SIGNIN_ENABLED")
     private val currentUserId = stringPreferencesKey("CURRENT_USER_ID")
     private val currentUserEmail = stringPreferencesKey("CURRENT_USER_EMAIL")
@@ -64,16 +63,6 @@ class DataStoreRepository @Inject constructor(@ApplicationContext val context: C
         }
     }
 
-    val getOpenedFirstTime: Flow<Boolean> = context.dataStore.data.map {
-
-        it[isOpenedFirstTime] ?: false
-    }
-
-    suspend fun setOpenedFirstTime(isOpened: Boolean) {
-        context.dataStore.edit {
-            it[isOpenedFirstTime] = isOpened
-        }
-    }
 
 
 }

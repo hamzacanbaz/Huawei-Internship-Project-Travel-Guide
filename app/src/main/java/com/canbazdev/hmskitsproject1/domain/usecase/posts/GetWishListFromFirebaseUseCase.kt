@@ -2,7 +2,6 @@ package com.canbazdev.hmskitsproject1.domain.usecase.posts
 
 import com.canbazdev.hmskitsproject1.domain.model.landmark.Post
 import com.canbazdev.hmskitsproject1.domain.repository.PostsRepository
-import com.canbazdev.hmskitsproject1.domain.source.RemoteDataSource
 import com.canbazdev.hmskitsproject1.util.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
