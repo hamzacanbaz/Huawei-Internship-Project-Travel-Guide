@@ -28,6 +28,10 @@
  - Jetpack DataStore
  - DataBinding
  - Glide
+ 
+ ## Video
+ 
+https://user-images.githubusercontent.com/58326260/185221722-5fec42a7-63f0-493a-aa0a-6fa993990aee.mp4
 
 ## Screenshots
 
