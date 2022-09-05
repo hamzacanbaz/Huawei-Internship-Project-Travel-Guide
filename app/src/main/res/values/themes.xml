@@ -28,7 +28,7 @@
     </style>
 
     <style name="Theme.CustomSplashScreenTheme" parent="Theme.SplashScreen">
-        <item name="android:windowBackground">@drawable/bg_splash</item>
+        <item name="android:windowBackground">@color/white</item>
         <item name="android:statusBarColor">@color/primary_dark</item>
         <item name="postSplashScreenTheme">@style/Theme.HmsKitsProject1</item>
     </style>

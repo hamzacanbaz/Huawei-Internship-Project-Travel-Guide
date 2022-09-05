@@ -5,7 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.canbazdev.hmskitsproject1.data.repository.DataStoreRepository
 import com.canbazdev.hmskitsproject1.domain.model.landmark.Post
-import com.canbazdev.hmskitsproject1.domain.usecase.posts.DeleteLandmarkFromWishList
+import com.canbazdev.hmskitsproject1.domain.usecase.posts.DeleteLandmarkFromWishListUseCase
 import com.canbazdev.hmskitsproject1.domain.usecase.posts.GetPostsByUserIdUseCase
 import com.canbazdev.hmskitsproject1.domain.usecase.posts.GetWishListFromFirebaseUseCase
 import com.canbazdev.hmskitsproject1.domain.usecase.profile.GetTimesOfDayUseCase
@@ -28,7 +28,7 @@ class ProfileViewModel @Inject constructor(
     private val getPostsByUserIdUseCase: GetPostsByUserIdUseCase,
     private val getWishListFromFirebaseUseCase: GetWishListFromFirebaseUseCase,
     private val getTimesOfDayUseCase: GetTimesOfDayUseCase,
-    private val deleteLandmarkFromWishList: DeleteLandmarkFromWishList,
+    private val deleteLandmarkFromWishListUseCase: DeleteLandmarkFromWishListUseCase,
     application: Application
 ) : AndroidViewModel(application) {
     private val _userId = MutableStateFlow("")
@@ -122,7 +122,7 @@ class ProfileViewModel @Inject constructor(
 
     fun removeFromWishList(postId: String) {
         viewModelScope.launch {
-            deleteLandmarkFromWishList.invoke(currentUserId, postId)
+            deleteLandmarkFromWishListUseCase.invoke(currentUserId, postId)
                 .collect {
                     if (it is Resource.Success) {
                         Toasty.success(
